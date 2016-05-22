@@ -39,6 +39,9 @@ Tenha ainda em consideração que:
   - O vídeo tem um frame rate de 25 fps;
   - 280 pixéis correspondem a 55mm.
 
+Sugestão de apresentação de informação no vídeo:  
+![alt text](https://github.com/devgiant/VC-TP2-a3893-a11198-a11201/blob/master/VC-TP2%20Enunciado/Enunciado-TP2.jpg "Logo Title Text 1")
+
 ## Avaliação
 Serão tomados como critérios de avaliação os seguintes factores:
 
