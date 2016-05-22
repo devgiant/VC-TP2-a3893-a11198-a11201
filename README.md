@@ -1,11 +1,11 @@
 # Enunciado do Trabalho Prático 2 - Visão por Computador
 
 ## Resumo
-Com este trabalho pretende-se dar aos alunos a oportunidade de aplicarem alguns conceitos de processamento e análise de imagem abordados nas aulas. Os alunos deverão desenvolver um programa em C, ou C++, que opere sobre o vídeo fornecido, de modo a obter o conjunto de informação desejada. Este trabalho culminará na elaboração de um programa compilado, que deverá ser entregue ao docente, bem como os ficheiros com o código fonte. O trabalho será alvo de apresentação oral.
+Com este trabalho pretende-se dar aos alunos a oportunidade de aplicarem alguns conceitos de processamento e análise de imagem abordados nas aulas. Os alunos deverão desenvolver um programa em C, ou C++, que opere sobre o vídeo fornecido, de modo a obter o conjunto de informação desejada. Este trabalho culminará na elaboração de um __programa compilado__, que deverá ser entregue ao docente, bem como os __ficheiros com o código fonte__. O trabalho será alvo de apresentação oral.
 
 
 ## Realização do trabalho prático
-No ficheiro “TP2.zip” é apresentada a respectiva descrição do trabalho e objectivos, contendo ainda:
+No ficheiro “__TP2.zip__” é apresentada a respectiva descrição do trabalho e objectivos, contendo ainda:
 
   - Vídeo a utilizar;
   - Código fonte com exemplo de leitura e exibição de ficheiro de vídeo em OpenCV;
@@ -13,9 +13,9 @@ No ficheiro “TP2.zip” é apresentada a respectiva descrição do trabalho e 
 
 O trabalho deverá ser desenvolvido em grupo, sendo que os grupos deverão ser constituídos por 3 elementos.
 Espera-se que os alunos utilizem os conhecimentos adquiridos ao longo das aulas de Visão por Computador, e desenvolvam as funcionalidades necessárias ao cumprimento dos objetivos.
-Note que todo o código deverá ser realizado em linguagem C, ou C++, podendo o aluno utilizar (para além das funções OpenCV identificadas no ficheiro “CodigoExemplo.c”, ou funções similares, dependendo da versão do OpenCV, ou linguagem de programação, que o grupo utilizar) até mais 3 funções do OpenCV.
-Não é permitida a utilização de outras bibliotecas de processamento de imagem.
-O trabalho deverá ainda ser apresentado em PowerPoint, pelos alunos, numa apresentação oral.
+Note que todo o código deverá ser realizado em linguagem C, ou C++, podendo o aluno utilizar (para além das funções OpenCV identificadas no ficheiro “__CodigoExemplo.c__”, ou funções similares, dependendo da versão do OpenCV, ou linguagem de programação, que o grupo utilizar) __até mais 3 funções do OpenCV__.
+**__Não é permitida a utilização de outras bibliotecas de processamento de imagem__**.
+**__O trabalho deverá ainda ser apresentado em PowerPoint, pelos alunos, numa apresentação oral__**.
 
 
 ## Objectivos
