@@ -1,6 +1,0 @@
-#OS junk files
-[Tt]humbs.db
-*.DS_Store
-
-#OpenCV files
-[Oo]pencv/
