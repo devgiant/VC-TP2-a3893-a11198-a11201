@@ -1,20 +1,36 @@
-// Exemplo para OpenCV v2.1
+/* pkg-config --modversion opencv
+* 2.4.9
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
 
+/*
+* File:   main.c
+* Author: kampos
+*
+* Created on 24 de Maio de 2016, 12:10
+*/
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <cv.h>
-#include <cxcore.h>
-#include <highgui.h>
+#include <stdlib.h>
+#include "C:\opencv\build\include\opencv\cxcore.h"
+#include "C:\opencv\build\include\opencv\cv.h"
+#include "C:\opencv\build\include\opencv\highgui.h"
 
+/*
+*
+*/
 
-int main(void)
-{
+int main(int argc, char **argv) {
 	// Vídeo
-	char *videofile = "video-tp2.avi";
+	char *videofile = "VC-TP2 Enunciado/video-tp2.avi";
 	CvCapture *capture;
 	IplImage *frame;
-	struct
-	{
+	IplImage*frameAUX;
+
+	struct {
 		int width, height;
 		int ntotalframes;
 		int fps;
@@ -25,60 +41,60 @@ int main(void)
 	double hScale = 0.5;
 	double vScale = 0.5;
 	int lineWidth = 1;
-	char str[500] = {0};
+	char str[500] = { 0 };
 	// Outros
 	int key = 0;
-	
+
 	/* Leitura de vídeo de um ficheiro */
 	capture = cvCaptureFromFile(videofile);
-	
+
 	/* Verifica se foi possível abrir o ficheiro de vídeo */
-	if(!capture)
-	{
+	if (!capture) {
 		fprintf(stderr, "Erro ao abrir o ficheiro de vídeo!\n");
 		return 1;
 	}
 
 	/* Número total de frames no vídeo */
-	video.ntotalframes = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
+	video.ntotalframes = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
 	/* Frame rate do vídeo */
-	video.fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	video.fps = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
 	/* Resolução do vídeo */
-	video.width = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
-	video.height = (int) cvGetCaptureProperty(capture,CV_CAP_PROP_FRAME_HEIGHT);
+	video.width = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
+	video.height = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
 
 	/* Cria uma janela para exibir o vídeo */
 	cvNamedWindow("VC - TP2", CV_WINDOW_AUTOSIZE);
 
 	/* Inicializa a fonte */
-	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth);
-	cvInitFont(&fontbkg, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth + 1);
+	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth, 0);
+	cvInitFont(&fontbkg, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth + 1, 0);
 
-	while( key != 'q' ) {
+	while (key != 'q') {
 		/* Leitura de uma frame do vídeo */
 		frame = cvQueryFrame(capture);
-
+		frameAUX = cvQueryFrame(capture);
 		/* Verifica se conseguiu ler a frame */
-		if(!frame) break;
+		if (!frame) break;
 
 		/* Número da frame a processar */
-		video.nframe = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES);
+		video.nframe = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES);
 
 		/* Exemplo de inserção texto na frame */
 		sprintf(str, "RESOLUCAO: %dx%d", video.width, video.height);
-		cvPutText (frame, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0));
-		cvPutText (frame, str, cvPoint(20, 20), &font, cvScalar(255, 255, 255));
+		cvPutText(frame, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frame, str, cvPoint(20, 20), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "TOTAL DE FRAMES: %d", video.ntotalframes);
-		cvPutText (frame, str, cvPoint(20, 40), &fontbkg, cvScalar(0, 0, 0));
-		cvPutText (frame, str, cvPoint(20, 40), &font, cvScalar(255, 255, 255));
+		cvPutText(frame, str, cvPoint(20, 40), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frame, str, cvPoint(20, 40), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "FRAME RATE: %d", video.fps);
-		cvPutText (frame, str, cvPoint(20, 60), &fontbkg, cvScalar(0, 0, 0));
-		cvPutText (frame, str, cvPoint(20, 60), &font, cvScalar(255, 255, 255));
+		cvPutText(frame, str, cvPoint(20, 60), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frame, str, cvPoint(20, 60), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "N. FRAME: %d", video.nframe);
-		cvPutText (frame, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0));
-		cvPutText (frame, str, cvPoint(20, 80), &font, cvScalar(255, 255, 255));
+		cvPutText(frame, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frame, str, cvPoint(20, 80), &font, cvScalar(255, 0, 0, 0));
 
 		// Faça o seu código aqui...
+
 
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frame);
@@ -89,7 +105,7 @@ int main(void)
 
 	/* Fecha a janela */
 	cvDestroyWindow("VC - TP2");
-	
+
 	/* Fecha o ficheiro de vídeo */
 	cvReleaseCapture(&capture);
 
