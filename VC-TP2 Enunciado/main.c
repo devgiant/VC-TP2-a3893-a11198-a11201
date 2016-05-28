@@ -1,23 +1,9 @@
-/* pkg-config --modversion opencv
-* 2.4.9
-* To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
-
-/*
-* File:   main.c
-* Author: kampos
-*
-* Created on 24 de Maio de 2016, 12:10
-*/
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-#include "C:\opencv\build\include\opencv\cxcore.h"
-#include "C:\opencv\build\include\opencv\cv.h"
-#include "C:\opencv\build\include\opencv\highgui.h"
+#include "cxcore.h"
+#include "cv.h"
+#include "highgui.h"
 
 /*
 *
