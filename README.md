@@ -40,7 +40,7 @@ Tenha ainda em consideração que:
   - 280 pixéis correspondem a 55mm.
 
 Sugestão de apresentação de informação no vídeo:  
-![alt text](https://github.com/devgiant/VC-TP2-a3893-a11198-a11201/blob/master/VC-TP2%20Enunciado/Enunciado-TP2.jpg "Logo Title Text 1")
+![alt text](https://github.com/devgiant/VC-TP2-a3893-a11198-a11201/blob/master/VC-TP2_Enunciado/Enunciado-TP2.jpg "Imagem 1")
 
 ## Avaliação
 Serão tomados como critérios de avaliação os seguintes factores:
