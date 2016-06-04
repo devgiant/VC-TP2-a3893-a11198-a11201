@@ -34,6 +34,27 @@ typedef struct {
 } IVC;
 
 
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                   ESTRUTURA DE UM BLOB (OBJECTO)
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+typedef struct {
+	int x, y, width, height;	// Caixa Delimitadora (Bounding Box)
+	int area;					// �rea
+	int xc, yc;					// Centro-de-massa
+	int perimeter;				// Perimetro
+	int label;					// Etiqueta
+
+	unsigned char *mask;		// Not Used
+	unsigned char *data;		// Not Used
+	int channels;				// Not Used
+	int levels;					// Not Used
+} OVC;
+
+
+
 //////////////////////////////////////////////////////////////////
 //                           FUNÇÕES                            //
 //////////////////////////////////////////////////////////////////

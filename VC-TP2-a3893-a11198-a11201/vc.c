@@ -187,124 +187,124 @@ void bit_to_unsigned_char(unsigned char *databit, unsigned char *datauchar, int 
 }
 
 
-//IVC *vc_read_image(char *filename)
-//{
-//	FILE *file = NULL;
-//	IVC *image = NULL;
-//	unsigned char *tmp;
-//	char tok[20];
-//	long int size, sizeofbinarydata;
-//	int width, height, channels;
-//	int levels = 255;
-//	int v;
-//
-//	// Abre o ficheiro
-//	if ((file = fopen(filename, "rb")) != NULL)
-//	{
-//		// Efectua a leitura do header
-//		netpbm_get_token(file, tok, sizeof(tok));
-//
-//		if (strcmp(tok, "P4") == 0) { channels = 1; levels = 1; }	// Se PBM (Binary [0,1])
-//		else if (strcmp(tok, "P5") == 0) channels = 1;				// Se PGM (Gray [0,MAX(level,255)])
-//		else if (strcmp(tok, "P6") == 0) channels = 3;				// Se PPM (RGB [0,MAX(level,255)])
-//		else
-//		{
-//#ifdef VC_DEBUG
-//			printf("ERROR -> vc_read_image():\n\tFile is not a valid PBM, PGM or PPM file.\n\tBad magic number!\n");
-//#endif
-//
-//			fclose(file);
-//			return NULL;
-//		}
-//
-//		if (levels == 1) // PBM
-//		{
-//			if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
-//				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1)
-//			{
-//#ifdef VC_DEBUG
-//				printf("ERROR -> vc_read_image():\n\tFile is not a valid PBM file.\n\tBad size!\n");
-//#endif
-//
-//				fclose(file);
-//				return NULL;
-//			}
-//
-//			// Aloca mem�ria para imagem
-//			image = vc_image_new(width, height, channels, levels);
-//			if (image == NULL) return NULL;
-//
-//			sizeofbinarydata = (image->width / 8 + ((image->width % 8) ? 1 : 0)) * image->height;
-//			tmp = (unsigned char *)malloc(sizeofbinarydata);
-//			if (tmp == NULL) return 0;
-//
-//#ifdef VC_DEBUG
-//			printf("\nchannels=%d w=%d h=%d levels=%d\n", image->channels, image->width, image->height, levels);
-//#endif
-//
-//			if ((v = fread(tmp, sizeof(unsigned char), sizeofbinarydata, file)) != sizeofbinarydata)
-//			{
-//#ifdef VC_DEBUG
-//				printf("ERROR -> vc_read_image():\n\tPremature EOF on file.\n");
-//#endif
-//
-//				vc_image_free(image);
-//				fclose(file);
-//				free(tmp);
-//				return NULL;
-//			}
-//
-//			bit_to_unsigned_char(tmp, image->data, image->width, image->height);
-//
-//			free(tmp);
-//		}
-//		else // PGM ou PPM
-//		{
-//			if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
-//				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1 ||
-//				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &levels) != 1 || levels <= 0 || levels > 255)
-//			{
-//#ifdef VC_DEBUG
-//				printf("ERROR -> vc_read_image():\n\tFile is not a valid PGM or PPM file.\n\tBad size!\n");
-//#endif
-//
-//				fclose(file);
-//				return NULL;
-//			}
-//
-//			// Aloca mem�ria para imagem
-//			image = vc_image_new(width, height, channels, levels);
-//			if (image == NULL) return NULL;
-//
-//#ifdef VC_DEBUG
-//			printf("\nchannels=%d w=%d h=%d levels=%d\n", image->channels, image->width, image->height, levels);
-//#endif
-//
-//			size = image->width * image->height * image->channels;
-//
-//			if ((v = fread(image->data, sizeof(unsigned char), size, file)) != size)
-//			{
-//#ifdef VC_DEBUG
-//				printf("ERROR -> vc_read_image():\n\tPremature EOF on file.\n");
-//#endif
-//
-//				vc_image_free(image);
-//				fclose(file);
-//				return NULL;
-//			}
-//		}
-//
-//		fclose(file);
-//	}
-//	else
-//	{
-//#ifdef VC_DEBUG
-//		printf("ERROR -> vc_read_image():\n\tFile not found.\n");
-//#endif
-//	}
-//
-//	return image;
-//}
+IVC *vc_read_image(char *filename)
+{
+	FILE *file = NULL;
+	IVC *image = NULL;
+	unsigned char *tmp;
+	char tok[20];
+	long int size, sizeofbinarydata;
+	int width, height, channels;
+	int levels = 255;
+	int v;
+
+	// Abre o ficheiro
+	if ((file = fopen(filename, "rb")) != NULL)
+	{
+		// Efectua a leitura do header
+		netpbm_get_token(file, tok, sizeof(tok));
+
+		if (strcmp(tok, "P4") == 0) { channels = 1; levels = 1; }	// Se PBM (Binary [0,1])
+		else if (strcmp(tok, "P5") == 0) channels = 1;				// Se PGM (Gray [0,MAX(level,255)])
+		else if (strcmp(tok, "P6") == 0) channels = 3;				// Se PPM (RGB [0,MAX(level,255)])
+		else
+		{
+#ifdef VC_DEBUG
+			printf("ERROR -> vc_read_image():\n\tFile is not a valid PBM, PGM or PPM file.\n\tBad magic number!\n");
+#endif
+
+			fclose(file);
+			return NULL;
+		}
+
+		if (levels == 1) // PBM
+		{
+			if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
+				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1)
+			{
+#ifdef VC_DEBUG
+				printf("ERROR -> vc_read_image():\n\tFile is not a valid PBM file.\n\tBad size!\n");
+#endif
+
+				fclose(file);
+				return NULL;
+			}
+
+			// Aloca mem�ria para imagem
+			image = vc_image_new(width, height, channels, levels);
+			if (image == NULL) return NULL;
+
+			sizeofbinarydata = (image->width / 8 + ((image->width % 8) ? 1 : 0)) * image->height;
+			tmp = (unsigned char *)malloc(sizeofbinarydata);
+			if (tmp == NULL) return 0;
+
+#ifdef VC_DEBUG
+			printf("\nchannels=%d w=%d h=%d levels=%d\n", image->channels, image->width, image->height, levels);
+#endif
+
+			if ((v = fread(tmp, sizeof(unsigned char), sizeofbinarydata, file)) != sizeofbinarydata)
+			{
+#ifdef VC_DEBUG
+				printf("ERROR -> vc_read_image():\n\tPremature EOF on file.\n");
+#endif
+
+				vc_image_free(image);
+				fclose(file);
+				free(tmp);
+				return NULL;
+			}
+
+			bit_to_unsigned_char(tmp, image->data, image->width, image->height);
+
+			free(tmp);
+		}
+		else // PGM ou PPM
+		{
+			if (sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &width) != 1 ||
+				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &height) != 1 ||
+				sscanf(netpbm_get_token(file, tok, sizeof(tok)), "%d", &levels) != 1 || levels <= 0 || levels > 255)
+			{
+#ifdef VC_DEBUG
+				printf("ERROR -> vc_read_image():\n\tFile is not a valid PGM or PPM file.\n\tBad size!\n");
+#endif
+
+				fclose(file);
+				return NULL;
+			}
+
+			// Aloca mem�ria para imagem
+			image = vc_image_new(width, height, channels, levels);
+			if (image == NULL) return NULL;
+
+#ifdef VC_DEBUG
+			printf("\nchannels=%d w=%d h=%d levels=%d\n", image->channels, image->width, image->height, levels);
+#endif
+
+			size = image->width * image->height * image->channels;
+
+			if ((v = fread(image->data, sizeof(unsigned char), size, file)) != size)
+			{
+#ifdef VC_DEBUG
+				printf("ERROR -> vc_read_image():\n\tPremature EOF on file.\n");
+#endif
+
+				vc_image_free(image);
+				fclose(file);
+				return NULL;
+			}
+		}
+
+		fclose(file);
+	}
+	else
+	{
+#ifdef VC_DEBUG
+		printf("ERROR -> vc_read_image():\n\tFile not found.\n");
+#endif
+	}
+
+	return image;
+}
 
 
 int vc_write_image(char *filename, IVC *image)
@@ -848,4 +848,214 @@ int vc_hsv_locate_plate(IVC *src, IVC *dst, int modeFilter)
 		}
 	}
 	return 1;
+}
+
+// Etiquetagem de blobs
+// src		: Imagem bin�ria
+// dst		: Imagem grayscale (ir� conter as etiquetas)
+// nlabels	: Endere�o de mem�ria de uma vari�vel inteira. Recebe o n�mero de etiquetas encontradas.
+// OVC*		: Retorna lista de estruturas de blobs (objectos), com respectivas etiquetas. � necess�rio libertar posteriormente esta mem�ria.
+OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->bytesperline;
+	int channels = src->channels;
+	int x, y, a, b;
+	long int i, size;
+	long int posX, posA, posB, posC, posD;
+	int labeltable[256] = { 0 };
+	int labelarea[256] = { 0 };
+	int label = 1; // Etiqueta inicial.
+	int num;
+	OVC *blobs; // Apontador para lista de blobs (objectos) que ser� retornada desta fun��o.
+
+				// Verifica��o de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels)) return NULL;
+	if (channels != 1) return NULL;
+
+	// Copia dados da imagem bin�ria para imagem grayscale
+	memcpy(datadst, datasrc, bytesperline * height);
+
+	// Todos os pix�is de plano de fundo devem obrigat�riamente ter valor 0
+	// Todos os pix�is de primeiro plano devem obrigat�riamente ter valor 255
+	// Ser�o atribu�das etiquetas no intervalo [1,254]
+	// Este algoritmo est� assim limitado a 254 labels
+	for (i = 0, size = bytesperline * height; i<size; i++)
+	{
+		if (datadst[i] != 0) datadst[i] = 255;
+	}
+
+	// Limpa os rebordos da imagem bin�ria
+	for (y = 0; y<height; y++)
+	{
+		datadst[y * bytesperline + 0 * channels] = 0;
+		datadst[y * bytesperline + (width - 1) * channels] = 0;
+	}
+	for (x = 0; x<width; x++)
+	{
+		datadst[0 * bytesperline + x * channels] = 0;
+		datadst[(height - 1) * bytesperline + x * channels] = 0;
+	}
+
+	// Efectua a etiquetagem
+	for (y = 1; y<height - 1; y++)
+	{
+		for (x = 1; x<width - 1; x++)
+		{
+			// Kernel:
+			// A B C
+			// D X
+
+			posA = (y - 1) * bytesperline + (x - 1) * channels; // A
+			posB = (y - 1) * bytesperline + x * channels; // B
+			posC = (y - 1) * bytesperline + (x + 1) * channels; // C
+			posD = y * bytesperline + (x - 1) * channels; // D
+			posX = y * bytesperline + x * channels; // X
+
+													// Se o pixel foi marcado
+			if (datadst[posX] != 0)
+			{
+				if ((datadst[posA] == 0) && (datadst[posB] == 0) && (datadst[posC] == 0) && (datadst[posD] == 0))
+				{
+					datadst[posX] = label;
+					labeltable[label] = label;
+					label++;
+				}
+				else
+				{
+					num = 255;
+
+					// Se A est� marcado, j� tem etiqueta (j� n�o � 255), e � menor que a etiqueta "num"
+					if ((datadst[posA] != 0) && (datadst[posA] != 255) && (datadst[posA] < num))
+					{
+						num = datadst[posA];
+					}
+					// Se B est� marcado, j� tem etiqueta (j� n�o � 255), e � menor que a etiqueta "num"
+					if ((datadst[posB] != 0) && (datadst[posB] != 255) && (datadst[posB] < num))
+					{
+						num = datadst[posB];
+					}
+					// Se C est� marcado, j� tem etiqueta (j� n�o � 255), e � menor que a etiqueta "num"
+					if ((datadst[posC] != 0) && (datadst[posC] != 255) && (datadst[posC] < num))
+					{
+						num = datadst[posC];
+					}
+					// Se D est� marcado, j� tem etiqueta (j� n�o � 255), e � menor que a etiqueta "num"
+					if ((datadst[posD] != 0) && (datadst[posD] != 255) && (datadst[posD] < num))
+					{
+						num = datadst[posD];
+					}
+
+					// Actualiza a tabela de etiquetas
+					if ((datadst[posA] != 0) && (datadst[posA] != 255))
+					{
+						if (labeltable[datadst[posA]] != labeltable[num])
+						{
+							for (a = 1; a<label; a++)
+							{
+								if (labeltable[a] == labeltable[datadst[posA]])
+								{
+									labeltable[a] = labeltable[num];
+								}
+							}
+						}
+					}
+					if ((datadst[posB] != 0) && (datadst[posB] != 255))
+					{
+						if (labeltable[datadst[posB]] != labeltable[num])
+						{
+							for (a = 1; a<label; a++)
+							{
+								if (labeltable[a] == labeltable[datadst[posB]])
+								{
+									labeltable[a] = labeltable[num];
+								}
+							}
+						}
+					}
+					if ((datadst[posC] != 0) && (datadst[posC] != 255))
+					{
+						if (labeltable[datadst[posC]] != labeltable[num])
+						{
+							for (a = 1; a<label; a++)
+							{
+								if (labeltable[a] == labeltable[datadst[posC]])
+								{
+									labeltable[a] = labeltable[num];
+								}
+							}
+						}
+					}
+					if ((datadst[posD] != 0) && (datadst[posD] != 255))
+					{
+						if (labeltable[datadst[posD]] != labeltable[num])
+						{
+							for (a = 1; a<label; a++)
+							{
+								if (labeltable[a] == labeltable[datadst[posD]])
+								{
+									labeltable[a] = labeltable[num];
+								}
+							}
+						}
+					}
+					labeltable[datadst[posX]] = num;
+
+					// Atribui a etiqueta ao pixel
+					datadst[posX] = num;
+				}
+			}
+		}
+	}
+
+	// Volta a etiquetar a imagem
+	for (y = 1; y<height - 1; y++)
+	{
+		for (x = 1; x<width - 1; x++)
+		{
+			posX = y * bytesperline + x * channels; // X
+
+			if (datadst[posX] != 0)
+			{
+				datadst[posX] = labeltable[datadst[posX]];
+			}
+		}
+	}
+
+	// Contagem do n�mero de blobs
+	// Passo 1: Eliminar, da tabela, etiquetas repetidas
+	for (a = 1; a<label - 1; a++)
+	{
+		for (b = a + 1; b<label; b++)
+		{
+			if (labeltable[a] == labeltable[b]) labeltable[b] = 0;
+		}
+	}
+	// Passo 2: Conta etiquetas e organiza a tabela de etiquetas, para que n�o hajam valores vazios (zero) entre etiquetas
+	*nlabels = 0;
+	for (a = 1; a<label; a++)
+	{
+		if (labeltable[a] != 0)
+		{
+			labeltable[*nlabels] = labeltable[a]; // Organiza tabela de etiquetas
+			(*nlabels)++; // Conta etiquetas
+		}
+	}
+
+	// Se n�o h� blobs
+	if (*nlabels == 0) return NULL;
+
+	// Cria lista de blobs (objectos) e preenche a etiqueta
+	blobs = (OVC *)calloc((*nlabels), sizeof(OVC));
+	if (blobs != NULL)
+	{
+		for (a = 0; a<(*nlabels); a++) blobs[a].label = labeltable[a];
+	}
+	else return NULL;
+
+	return blobs;
 }

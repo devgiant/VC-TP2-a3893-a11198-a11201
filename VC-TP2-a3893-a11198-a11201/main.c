@@ -83,6 +83,22 @@ int main(int argc, char **argv) {
 
 		#pragma region BLOB_MAIN
 
+		IVC *new = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
+
+		new->data = frame->imageData;
+		new->bytesperline = frame->width*frame->nChannels;
+
+		// filtragem
+		vc_rgb_to_hsv_filter_blue_yellow(new, 1);
+
+		//	typedef struct {
+		//	unsigned char *data;
+		//	int width, height;
+		//	int channels;			// Binario/Cinzentos=1; RGB=3
+		//	int levels;				// Binario=1; Cinzentos [1,255]; RGB [1,255]
+		//	int bytesperline;		// width * channels
+		//} IVC;
+
 
 		////IVC image[0] = frame;
 
