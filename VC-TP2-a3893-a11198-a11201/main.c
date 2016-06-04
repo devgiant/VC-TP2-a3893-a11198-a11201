@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 	char *videofile = "../VC-TP2_Enunciado/video-tp2.avi";
 	CvCapture *capture;
 	IplImage *frame;
-	IplImage*frameAUX;
+	IplImage *frameAUX;
 
 	struct {
 		int width, height;
@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
 	char str[500] = { 0 };
 	// Outros
 	int key = 0;
+
+	int count = 0;
 
 	/* Leitura de vídeo de um ficheiro */
 	capture = cvCaptureFromFile(videofile);
@@ -50,6 +52,7 @@ int main(int argc, char **argv) {
 
 	/* Cria uma janela para exibir o vídeo */
 	cvNamedWindow("VC - TP2", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("VC - TP2_2", CV_WINDOW_AUTOSIZE);
 
 	/* Inicializa a fonte */
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth, 0);
@@ -65,6 +68,25 @@ int main(int argc, char **argv) {
 		/* Número da frame a processar */
 		video.nframe = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES);
 
+		cvShowImage("VC - TP2_2", frame);
+
+		// Faça o seu código aqui...
+
+		#pragma region BLOB_MAIN
+
+		IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
+
+		newFrame->data = frame->imageData;
+		newFrame->bytesperline = frame->width*frame->nChannels;
+
+		
+		
+		// filtragem
+		vc_rgb_to_hsv_filter(newFrame, 1, video.nframe);
+
+		//vc_binary_blob_labelling(newFrame, frame, count);
+		
+
 		/* Exemplo de inserção texto na frame */
 		sprintf(str, "RESOLUCAO: %dx%d", video.width, video.height);
 		cvPutText(frame, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0, 0));
@@ -78,18 +100,9 @@ int main(int argc, char **argv) {
 		sprintf(str, "N. FRAME: %d", video.nframe);
 		cvPutText(frame, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0, 0));
 		cvPutText(frame, str, cvPoint(20, 80), &font, cvScalar(255, 0, 0, 0));
-
-		// Faça o seu código aqui...
-
-		#pragma region BLOB_MAIN
-
-		IVC *new = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
-
-		new->data = frame->imageData;
-		new->bytesperline = frame->width*frame->nChannels;
-
-		// filtragem
-		vc_rgb_to_hsv_filter_blue_yellow(new, 1);
+		sprintf(str, "Canais: %d", frame->nChannels);
+		cvPutText(frame, str, cvPoint(20, 100), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frame, str, cvPoint(20, 100), &font, cvScalar(255, 0, 0, 0));
 
 		//	typedef struct {
 		//	unsigned char *data;
@@ -159,13 +172,14 @@ int main(int argc, char **argv) {
 	
 
 
-
+		//vc_image_free(newFrame);
 
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frame);
+		
 
 		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
-		key = cvWaitKey(1);
+		key = cvWaitKey(20);
 	}
 
 	/* Fecha a janela */
