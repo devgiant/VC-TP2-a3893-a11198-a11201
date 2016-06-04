@@ -19,7 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="vc.c" />
     <ClCompile Include="main.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vc.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5ED420A2-4EDA-4BBD-B2A3-6148E00A229B}</ProjectGuid>

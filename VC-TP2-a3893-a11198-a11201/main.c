@@ -1,16 +1,16 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include "cxcore.h"
 #include "cv.h"
 #include "highgui.h"
-
+#include "vc.h"
 /*
 *
 */
 
 int main(int argc, char **argv) {
-	// Vídeo
+	// VÃ­deo
 	char *videofile = "../VC-TP2_Enunciado/video-tp2.avi";
 	CvCapture *capture;
 	IplImage *frame;
@@ -31,24 +31,24 @@ int main(int argc, char **argv) {
 	// Outros
 	int key = 0;
 
-	/* Leitura de vídeo de um ficheiro */
+	/* Leitura de vÃ­deo de um ficheiro */
 	capture = cvCaptureFromFile(videofile);
 
-	/* Verifica se foi possível abrir o ficheiro de vídeo */
+	/* Verifica se foi possÃ­vel abrir o ficheiro de vÃ­deo */
 	if (!capture) {
-		fprintf(stderr, "Erro ao abrir o ficheiro de vídeo!\n");
+		fprintf(stderr, "Erro ao abrir o ficheiro de vÃ­deo!\n");
 		return 1;
 	}
 
-	/* Número total de frames no vídeo */
+	/* NÃºmero total de frames no vÃ­deo */
 	video.ntotalframes = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
-	/* Frame rate do vídeo */
+	/* Frame rate do vÃ­deo */
 	video.fps = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-	/* Resolução do vídeo */
+	/* ResoluÃ§Ã£o do vÃ­deo */
 	video.width = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
 	video.height = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
 
-	/* Cria uma janela para exibir o vídeo */
+	/* Cria uma janela para exibir o vÃ­deo */
 	cvNamedWindow("VC - TP2", CV_WINDOW_AUTOSIZE);
 
 	/* Inicializa a fonte */
@@ -56,16 +56,16 @@ int main(int argc, char **argv) {
 	cvInitFont(&fontbkg, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth + 1, 0);
 
 	while (key != 'q') {
-		/* Leitura de uma frame do vídeo */
+		/* Leitura de uma frame do vÃ­deo */
 		frame = cvQueryFrame(capture);
 		frameAUX = cvQueryFrame(capture);
 		/* Verifica se conseguiu ler a frame */
 		if (!frame) break;
 
-		/* Número da frame a processar */
+		/* NÃºmero da frame a processar */
 		video.nframe = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES);
 
-		/* Exemplo de inserção texto na frame */
+		/* Exemplo de inserÃ§Ã£o texto na frame */
 		sprintf(str, "RESOLUCAO: %dx%d", video.width, video.height);
 		cvPutText(frame, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0, 0));
 		cvPutText(frame, str, cvPoint(20, 20), &font, cvScalar(255, 0, 0, 0));
@@ -79,20 +79,83 @@ int main(int argc, char **argv) {
 		cvPutText(frame, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0, 0));
 		cvPutText(frame, str, cvPoint(20, 80), &font, cvScalar(255, 0, 0, 0));
 
-		// Faça o seu código aqui...
+		// FaÃ§a o seu cÃ³digo aqui...
+
+		#pragma region BLOB_MAIN
+
+
+		////IVC image[0] = frame;
+
+		////
+
+		////
+		//// Abrir imagem em grayscale, fazer a binarizaï¿½ï¿½o manual, etiquetar os blobs e gravar em novo ficheiro
+	
+		////	IVC *image[2];
+
+
+		////	int i, nblobs;
+		////	OVC *blobs;
+
+		////	/*image[0] = vc_read_image("Images/FLIR/flir-01.pgm");
+		////	if (image[0] == NULL)
+		////	{
+		////		printf("ERROR -> vc_read_image():\n\tFile not found!\n");
+		////		getchar();
+		////		return 0;
+		////	}*/
+
+		////	/*image[1] = vc_image_new(image[0]->width, image[0]->height, 1, 255);
+		////	if (image[1] == NULL)
+		////	{
+		////		printf("ERROR -> vc_image_new():\n\tOut of memory!\n");
+		////		getchar();
+		////		return 0;
+		////	}*/
+
+		////	vc_gray_to_binary(image[0], 127);
+		////	blobs = vc_binary_blob_labelling(frame, frameAUX, &nblobs);
+
+		////	if (blobs != NULL)
+		////	{
+		////		printf("\nNumber of labels: %d\n", nblobs);
+		////		for (i = 0; i<nblobs; i++)
+		////		{
+		////			printf("-> Label %d\n", blobs[i].label);
+		////		}
+
+		////		free(blobs);
+		////	}
+
+		////	/*vc_write_image("vc0022.pgm", frameAUX);
+
+		////	vc_image_free(image[0]);
+		////	vc_image_free(image[1]);
+
+		////	printf("Press any key to exit...\n");
+		////	getchar();
+
+		////	return 0;
+		////}*/
+
+#pragma endregion
+
+	
+
+
 
 
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frame);
 
-		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
+		/* Sai da aplicaÃ§Ã£o, se o utilizador premir a tecla 'q' */
 		key = cvWaitKey(1);
 	}
 
 	/* Fecha a janela */
 	cvDestroyWindow("VC - TP2");
 
-	/* Fecha o ficheiro de vídeo */
+	/* Fecha o ficheiro de vÃ­deo */
 	cvReleaseCapture(&capture);
 
 	return 0;
