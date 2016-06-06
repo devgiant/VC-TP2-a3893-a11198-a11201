@@ -33,6 +33,9 @@ int main(int argc, char **argv) {
 
 	int count = 0;
 
+	float min = 1000;
+	float max = 0;
+
 	/* Leitura de vídeo de um ficheiro */
 	capture = cvCaptureFromFile(videofile);
 
@@ -74,15 +77,43 @@ int main(int argc, char **argv) {
 
 		#pragma region BLOB_MAIN
 
-		IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
+		IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);		
 
 		newFrame->data = frame->imageData;
 		newFrame->bytesperline = frame->width*frame->nChannels;
 
 		
-		
 		// filtragem
 		vc_rgb_to_hsv_filter(newFrame, 1);
+
+		min = vc_min_max(newFrame, min, 0);
+		max = vc_min_max(newFrame, max, 1);
+
+		printf("%f - %f \n", min, max);
+
+		vc_rgb_to_hsv_filter2(newFrame, min, max);
+
+		//vc_rgb_to_hsv_filter2(newFrame, 2);
+
+		//vc_write_image("Gray_Image.ppm",newFrame);
+
+		//cvSaveImage("Gray_Image.ppm", newFrame, 0);
+		/*IplImage* im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
+
+		
+
+		IplImage* im_bw = cvCreateImage(cvGetSize(im_gray), IPL_DEPTH_8U, 1);
+		cvThreshold(im_gray, im_bw, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+		vc_gray_edge_sobel(im_bw, im_gray, 1);*/
+
+		//vc_rgb_to_gray(newFrame, newFrame2);
+
+		//vc_gray_edge_sobel(newFrame2, newFrame, 10);
+
+		//vc_gray_to_binary_global_mean(newFrame2);
+
+		
 
 		//vc_binary_blob_labelling(newFrame, frame, count);
 		

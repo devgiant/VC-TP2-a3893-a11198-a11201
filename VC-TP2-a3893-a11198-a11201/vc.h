@@ -84,3 +84,20 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels);
 
 
 int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter);
+
+int vc_rgb_to_hsv_filter2(IVC *srcdst, float min, float max);
+
+
+int vc_binary_erode(IVC *src, IVC *dst, int kernel);
+
+int vc_gray_to_binary_global_mean(IVC *srcdst);
+
+int vc_binary_dilate(IVC *src, IVC *dst, int kernel);
+
+int vc_gray_edge_sobel(IVC *src, IVC *dst, float th);
+
+int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th);
+
+int vc_rgb_to_gray(IVC *src, IVC *dst);
+
+float vc_min_max(IVC *srcdst, float min_max, int modeFilter);

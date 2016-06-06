@@ -1159,13 +1159,16 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 		// se modo = 1 então filtra apenas laranjas
 		else if (modeFilter == 1)
 		{
-			// filtrar laranja
-			// azul if (((hue >= 160) && (hue <= 260)) && (saturation / 255.0*100.0 >= 50) & (value / 255.0*100.0 >= 50))
-			if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
+			// filtrar vermelho/laranja escuro
+			/*if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 50) && (value / 255.0*100.0 >= 45))
 			{
-				/*data[i] = hue; // branco 
-				data[i + 1] = saturation; // branco
-				data[i + 2] = value; // branco*/
+				data[i] = 0; // preto 
+				data[i + 1] = 0; // preto
+				data[i + 2] = 0; // preto
+			}
+			// filtrar laranjas
+			else */if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
+			{
 				data[i] = hue; // branco 
 				data[i + 1] = saturation; // branco
 				data[i + 2] = value; // branco
@@ -1181,11 +1184,11 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 		else if (modeFilter == 2)
 		{
 			// filtrar amarelo
-			if (((hue >= 45) && (hue <= 65)) && (saturation / 255.0*100.0 >= 55) & (value / 255.0*100.0 >= 75))
+			if (((hue >= 0) && (hue <= 360)) && (saturation / 255.0*100.0 <= 50) & (value / 255.0*100.0 <= 50))
 			{
-				data[i] = 200; // cinza 
-				data[i + 1] = 200; // cinza
-				data[i + 2] = 200; // cinza
+				data[i] = hue; // cinza 
+				data[i + 1] = saturation; // cinza
+				data[i + 2] = value; // cinza
 			}
 			else
 			{
@@ -1200,4 +1203,403 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 		}
 	}
 	return 1;
+}
+
+// filtrar dependendo do modo: azul, amarelo, azul e amarelo
+// passa para branco, tudo o resto a preto
+int vc_rgb_to_hsv_filter2(IVC *srcdst, float min, float max)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
+
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	/*	printf("%d - ", channels);*/
+
+	//float med = min;
+	float med = max - min;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		hue = (float)data[i];
+		saturation = (float)data[i + 1];
+		value = (float)data[i + 2];
+
+		// filtrar azul e amarelo
+		if (saturation == min)
+		{
+			data[i] = 255; // branco 
+			data[i + 1] = 0; // branco
+			data[i + 2] = 0; // branco
+		}
+		/*else if (saturation >= max-min) */ // +/- a funcionar
+		else if (saturation >= med) 
+		{
+			data[i] = 0; // branco 
+			data[i + 1] = 255; // branco
+			data[i + 2] = 0; // branco
+		}
+		else
+		{
+			data[i] = 0; // preto
+			data[i + 1] = 0; // preto
+			data[i + 2] = 0; // preto
+		}		
+	}
+	return 1;
+}
+
+
+float vc_min_max(IVC *srcdst, float min_max, int modeFilter)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
+
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		hue = (float)data[i];
+		saturation = (float)data[i + 1];
+		value = (float)data[i + 2];
+		
+		// se modo = 0
+		// calcula minimo
+		if (modeFilter == 0)
+		{
+			// filtrar azul e amarelo
+			if (saturation < min_max && value != 0)
+			{
+				min_max = saturation;
+			}
+		}
+		// se modo = 1
+		// calcula maximo
+		else if (modeFilter == 1)
+		{
+			// filtrar azul e amarelo
+			if (saturation > min_max)
+			{
+				min_max = saturation;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	return min_max;
+}
+
+
+// erode
+int vc_binary_erode(IVC *src, IVC *dst, int kernel)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->bytesperline;
+	int channels = src->channels;
+	int x, y;
+	int xx, yy;
+	int xxyymax = (kernel - 1) / 2;
+	int xxyymin = -xxyymax;
+	int max, min;
+	long int pos, posk;
+	unsigned char threshold;
+
+	// Verifica��o de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels)) return 0;
+	if (channels != 1) return 0;
+
+	int estado = 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			max = datasrc[pos];
+			min = datasrc[pos];
+
+			// NxM Vizinhos
+			for (yy = xxyymin; yy <= xxyymax; yy++)
+			{
+				for (xx = xxyymin; xx <= xxyymax; xx++)
+				{
+					if ((y + yy >= 0) && (y + yy < height) && (x + xx >= 0) && (x + xx < width))
+					{
+						posk = (y + yy) * bytesperline + (x + xx) * channels;
+
+						if (datasrc[posk] < 255) estado = 1;
+
+					}
+				}
+			}
+
+			if (estado == 1) datadst[pos] = 0;
+			else datadst[pos] = 255;
+			estado = 0;
+		}
+	}
+
+	return 1;
+}
+
+
+int vc_gray_to_binary_global_mean(IVC *srcdst)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->width * srcdst->channels;
+	int channels = srcdst->channels;
+	int x, y, soma = 0, tr;
+	long int pos;
+
+	//verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 1) return 0;
+
+	// inverter imagem rgb
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			soma += data[pos];
+		}
+	}
+
+	tr = soma / (height*width);
+
+	y = 0; x = 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			if (data[pos] > tr)
+			{
+				data[pos] = 255;
+			}
+			else
+			{
+				data[pos] = 0;
+			}
+		}
+	}
+
+	return 1;
+
+}
+
+int vc_binary_dilate(IVC *src, IVC *dst, int kernel)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->bytesperline;
+	int channels = src->channels;
+	int x, y;
+	int xx, yy;
+	int xxyymax = (kernel - 1) / 2;
+	int xxyymin = -xxyymax;
+	int max, min;
+	long int pos, posk;
+	unsigned char threshold;
+
+	// Verifica��o de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height) || (src->channels != dst->channels)) return 0;
+	if (channels != 1) return 0;
+
+	int estado = 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			max = datasrc[pos];
+			min = datasrc[pos];
+
+			// NxM Vizinhos
+			for (yy = xxyymin; yy <= xxyymax; yy++)
+			{
+				for (xx = xxyymin; xx <= xxyymax; xx++)
+				{
+					if ((y + yy >= 0) && (y + yy < height) && (x + xx >= 0) && (x + xx < width))
+					{
+						posk = (y + yy) * bytesperline + (x + xx) * channels;
+
+						if (datasrc[posk] >= 255) estado = 1;
+
+					}
+				}
+			}
+
+			if (estado == 1) datadst[pos] = 255;
+			else datadst[pos] = 0;
+			estado = 0;
+		}
+	}
+
+	return 1;
+}
+
+
+// Contornos de uma imagem em tons de cinzento utilizando os operadores de Prewitt
+int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th)
+{
+	unsigned char *data = (unsigned char *)src->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->width*src->channels;
+	int channels = src->channels;
+	int x, y;
+	long int pos;
+	long int posA, posB, posC, posD, posE, posF, posG, posH;
+	long int mag, mx, my;
+
+	if ((width <= 0) || (height <= 0) || (src->data == NULL)) return 0;
+	if (channels != 1) return 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			posA = (y - 1)* bytesperline + (x - 1) * channels;
+			posB = (y - 1)* bytesperline + (x)* channels;
+			posC = (y - 1)* bytesperline + (x + 1)* channels;
+			posD = (y)* bytesperline + (x - 1)* channels;
+			posE = (y)* bytesperline + (x + 1)* channels;
+			posF = (y + 1)* bytesperline + (x - 1)* channels;
+			posG = (y + 1)* bytesperline + (x)* channels;
+			posH = (y + 1)* bytesperline + (x + 1)* channels;
+			mx = ((-1 * data[posA]) + (1 * data[posC]) + (-1 * data[posD]) + (1 * data[posE]) + (-1 * data[posF]) + (1 * data[posH])) / 3;
+			my = ((-1 * data[posA]) + (1 * data[posF]) + (-1 * data[posB]) + (1 * data[posG]) + (-1 * data[posC]) + (1 * data[posH])) / 3;
+
+			mag = sqrt((mx*mx) + (my * my));
+
+			if (mag > th)
+				dst->data[pos] = 255;
+			else
+				dst->data[pos] = 0;
+		}
+	}
+}
+
+
+// Contornos de uma imagem em tons de cinzento utilizando os operadores de Sobel
+int vc_gray_edge_sobel(IVC *src, IVC *dst, float th)
+{
+	unsigned char *data = (unsigned char *)src->data;
+	int width = src->width;
+	int height = src->height;
+	int bytesperline = src->width*src->channels;
+	int channels = src->channels;
+	int x, y;
+	long int pos;
+	long int posA, posB, posC, posD, posE, posF, posG, posH;
+	long int mag, mx, my;
+	if ((width <= 0) || (height <= 0) || (src->data == NULL)) return 0;
+	if (channels != 1) return 0;
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+			posA = (y - 1)* bytesperline + (x - 1) * channels;
+			posB = (y - 1)* bytesperline + (x)* channels;
+			posC = (y - 1)* bytesperline + (x + 1)* channels;
+			posD = (y)* bytesperline + (x - 1)* channels;
+			posE = (y)* bytesperline + (x + 1)* channels;
+			posF = (y + 1)* bytesperline + (x - 1)* channels;
+			posG = (y + 1)* bytesperline + (x)* channels;
+			posH = (y + 1)* bytesperline + (x + 1)* channels;
+			mx = ((-1 * data[posA]) + (1 * data[posC]) + (-2 * data[posD]) + (2 * data[posE]) + (-1 * data[posF]) + (1 * data[posH])) / 3;
+			my = ((-1 * data[posA]) + (1 * data[posF]) + (-2 * data[posB]) + (2 * data[posG]) + (-1 * data[posC]) + (1 * data[posH])) / 3;
+			mag = sqrt((mx*mx) + (my * my));
+			if (mag > th)
+				dst->data[pos] = 255;
+			else
+				dst->data[pos] = 0;
+		}
+	}
+}
+
+
+int vc_rgb_to_gray(IVC *src, IVC *dst)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	int bytesperline_src = src->width * src->channels;
+	int channels_src = src->channels;
+
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int bytesperline_dst = dst->width * dst->channels;
+	int channels_dst = dst->channels;
+
+	int width = src->width;
+	int height = src->height;
+	int x, y;
+	long int pos_src, pos_dst;
+	float rf, gf, bf;
+
+	// verificação de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
+	if ((src->channels != 3) || (dst->channels != 1)) return 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos_src = y * bytesperline_src + x * channels_src;
+			pos_dst = y * bytesperline_dst + x * channels_dst;
+
+			rf = (float)datasrc[pos_src];
+			gf = (float)datasrc[pos_src + 1];
+			bf = (float)datasrc[pos_src + 2];
+
+			//datadst[pos_dst] = (unsigned char) ((rf * 0.299) + (gf * 0.587) + (bf * 0.114));
+
+			datadst[pos_dst] = (unsigned char)((rf + gf + bf) / 3.0);
+		}
+	}
+
+	return 1;
+
 }
