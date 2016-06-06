@@ -83,4 +83,4 @@ int vc_hsv_locate_plate(IVC *src, IVC *dst, int modeFilter);
 OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels);
 
 
-int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter, int nframe);
+int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter);

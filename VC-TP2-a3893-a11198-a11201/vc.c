@@ -1063,7 +1063,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 
 // filtrar dependendo do modo: azul, amarelo, azul e amarelo
 // passa para branco, tudo o resto a preto
-int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter, int nframe)
+int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 {
 	unsigned char *data = (unsigned char *)srcdst->data;
 	int width = srcdst->width;

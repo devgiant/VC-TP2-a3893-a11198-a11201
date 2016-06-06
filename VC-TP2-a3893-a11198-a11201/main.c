@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 		
 		
 		// filtragem
-		vc_rgb_to_hsv_filter(newFrame, 1, video.nframe);
+		vc_rgb_to_hsv_filter(newFrame, 1);
 
 		//vc_binary_blob_labelling(newFrame, frame, count);
 		
