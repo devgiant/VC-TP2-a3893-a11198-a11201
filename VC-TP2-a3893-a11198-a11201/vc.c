@@ -1603,3 +1603,120 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 	return 1;
 
 }
+
+
+
+////int vc_hsv_to_gray(IVC *src, IVC *dst)
+////{
+////	unsigned char *datasrc = (unsigned char *)src->data;
+////	int bytesperline_src = src->width * src->channels;
+////	int channels_src = src->channels;
+////
+////	unsigned char *datadst = (unsigned char *)dst->data;
+////	int bytesperline_dst = dst->width * dst->channels;
+////	int channels_dst = dst->channels;
+////
+////	int width = src->width;
+////	int height = src->height;
+////
+////
+////	float r, g, b, hue, saturation, value;
+////	float rgb_max, rgb_min;
+////	int i, size;
+////
+////	int x, y;
+////	long int pos_src, pos_dst;
+////	float rf, gf, bf;
+////	
+////	// Verificação de erros
+////	/*
+////	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+////	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
+////	if ((src->channels != 3) || (dst->channels != 1)) return 0;*/
+////
+////	size = width * height * channels_src;	
+////
+////	for (i = 0; i < size; i = i + channels_src)
+////	{
+////		hue = (float)datasrc[i];
+////		saturation = (float)datasrc[i + 1];
+////		value = (float)datasrc[i + 2];
+////		
+////		if (size == 1)
+////		{
+////			pos_dst = 1;
+////			printf("1\n");
+////			system("pause");
+////		}
+////		else
+////		{
+////			pos_dst = size / channels_src;
+////			//printf("%d - %d\n", pos_dst, size);
+////		}
+////
+////		if (hue == 255)
+////		{
+////			datadst[pos_dst] = 150;
+////		}
+////		else if (saturation == 255)
+////		{
+////			datadst[pos_dst] = 255;
+////		}
+////		else
+////		{
+////			datadst[pos_dst] = 0;
+////		}
+////	}
+////	return 1;
+////}
+int vc_hsv_to_gray(IVC *src, IVC *dst)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	int bytesperline_src = src->width * src->channels;
+	int channels_src = src->channels;
+
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int bytesperline_dst = dst->width * dst->channels;
+	int channels_dst = dst->channels;
+
+	int width = src->width;
+	int height = src->height;
+	int x, y;
+	long int pos_src, pos_dst;
+	float rf, gf, bf;
+
+	// verificação de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
+	if ((src->channels != 3) || (dst->channels != 1)) return 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos_src = y * bytesperline_src + x * channels_src;
+			pos_dst = y * bytesperline_dst + x * channels_dst;
+
+			rf = (float)datasrc[pos_src];
+			gf = (float)datasrc[pos_src + 1];
+			bf = (float)datasrc[pos_src + 2];
+
+			//datadst[pos_dst] = (unsigned char) ((rf * 0.299) + (gf * 0.587) + (bf * 0.114));
+			//datadst[pos_dst] = (unsigned char)((rf + gf + bf) / 3.0);
+			
+			if (rf == 255)
+			{
+				datadst[pos_dst] = 150;				
+			}
+			else if (gf == 255)
+			{
+				datadst[pos_dst] = 255;
+			}
+			else
+			{
+				datadst[pos_dst] = 0;
+			}
+		}
+	}
+	return 1;
+}

@@ -77,10 +77,15 @@ int main(int argc, char **argv) {
 
 		#pragma region BLOB_MAIN
 
-		IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);		
+		IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
+		IVC *newFrame_gray = vc_image_new(frame->width, frame->height, 1, 255);
+		IVC *newFrame_bin = vc_image_new(frame->width, frame->height, 1, 255);
 
 		newFrame->data = frame->imageData;
 		newFrame->bytesperline = frame->width*frame->nChannels;
+
+		//newFrame_gray->data = frame->imageData;
+		//newFrame_gray->bytesperline = frame->width;
 
 		
 		// filtragem
@@ -92,6 +97,32 @@ int main(int argc, char **argv) {
 		printf("%f - %f \n", min, max);
 
 		vc_rgb_to_hsv_filter2(newFrame, min, max);
+
+		vc_hsv_to_gray(newFrame, newFrame_gray);
+
+		vc_gray_to_binary_global_mean(newFrame_gray);
+
+		vc_binary_erode(newFrame_gray, newFrame_bin, 50);
+
+		cvShowImage("VC - TP2_3", frame);
+
+		vc_write_image("gray_combin.ppm", newFrame_gray);
+
+		//vc_write_image("Gray_Image.ppm", newFrame);
+		//IplImage *im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
+		//IplImage *im_gray2 = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
+
+		/*IVC *im_gray;
+		IVC *im_gray2;
+
+		im_gray = vc_read_image("Gray_Image.ppm");
+		im_gray2 = vc_image_new(newFrame->width, newFrame->height, 1, 255);*/
+		
+		//vc_rgb_to_gray(newFrame, im_gray2);
+		//vc_gray_to_binary_global_mean(im_gray);
+
+		//vc_binary_erode(im_gray, im_gray2, 1000);
+		//vc_binary_dilate(im_gray, im_gray2, 9);
 
 		//vc_rgb_to_hsv_filter2(newFrame, 2);
 
@@ -212,7 +243,7 @@ int main(int argc, char **argv) {
 		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
 		key = cvWaitKey(20);
 	}
-
+	
 	/* Fecha a janela */
 	cvDestroyWindow("VC - TP2");
 

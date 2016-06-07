@@ -101,3 +101,6 @@ int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th);
 int vc_rgb_to_gray(IVC *src, IVC *dst);
 
 float vc_min_max(IVC *srcdst, float min_max, int modeFilter);
+
+// criada por nós
+int vc_hsv_to_gray(IVC *src, IVC *dst);
