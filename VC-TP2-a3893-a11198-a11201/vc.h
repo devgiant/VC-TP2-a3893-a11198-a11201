@@ -2,18 +2,17 @@
 //           INSTITUTO POLITÉCNICO DO CÁVADO E DO AVE           //
 //      ENGENHARIA DE SISTEMAS INFORMÁTICOS (PL) 2015/2016      //
 //                                                              //
-//                      TRABALHO PRÁTICO 1                      //
+//                      TRABALHO PRÁTICO 2                      //
 //                     VISÃO POR COMPUTADOR                     //
 //                                                              //
-//                   A3893  - ANDRÉ FERNANDES                   //
-//                    A11198 - ANDRÉ MARTINS                    //
+//                   A3893 - ANDRÉ FERNANDES                    //
+//                   A11198 - ANDRÉ MARTINS                     //
 //                   A11201 - ÂNGELO FERREIRA                   //
 //                                                              //
 //////////////////////////////////////////////////////////////////
 
 
 #define VC_DEBUG
-
 #define MAX3(a,b,c) (a>b?(a>c?a:c):(b>c?b:c))
 #define MIN3(a,b,c) (a<b?(a<c?a:c):(b<c?b:c))
 #define ESPESSURA 3
@@ -34,11 +33,9 @@ typedef struct {
 } IVC;
 
 
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//                   ESTRUTURA DE UM BLOB (OBJECTO)
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+//////////////////////////////////////////////////////////////////
+//                   ESTRUTURA DE UM BLOB (OBJECTO)             //
+//////////////////////////////////////////////////////////////////
 
 typedef struct {
 	int x, y, width, height;	// Caixa Delimitadora (Bounding Box)
@@ -85,12 +82,12 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels);
 
 int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter);
 
-int vc_rgb_to_hsv_filter2(IVC *srcdst, float min, float max);
+
 
 
 int vc_binary_erode(IVC *src, IVC *dst, int kernel);
 
-int vc_gray_to_binary_global_mean(IVC *srcdst);
+
 
 int vc_binary_dilate(IVC *src, IVC *dst, int kernel);
 
@@ -98,9 +95,27 @@ int vc_gray_edge_sobel(IVC *src, IVC *dst, float th);
 
 int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th);
 
-int vc_rgb_to_gray(IVC *src, IVC *dst);
+//int vc_rgb_to_gray(IVC *src, IVC *dst);
 
-float vc_min_max(IVC *srcdst, float min_max, int modeFilter);
 
-// criada por nós
-int vc_hsv_to_gray(IVC *src, IVC *dst);
+
+
+
+
+// filtragem por cor
+int vc_bgr_to_hsv_filter(IVC *srcdst);
+
+// calcular minimo ou maximo
+float vc_min_max(IVC *srcdst, float min_max, int mode);
+
+// filtrar pelo min, media e max
+int vc_min_max_filter(IVC *srcdst, float min, float max);
+
+// passar para gray
+int vc_img_to_gray(IVC *src, IVC *dst);
+
+// passar para binario
+int vc_gray_to_binary_global_mean(IVC *srcdst);
+
+// passar para a frame
+int vc_pix_to_frame(IVC *src, IVC *dst);

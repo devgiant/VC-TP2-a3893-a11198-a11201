@@ -2,18 +2,17 @@
 //           INSTITUTO POLITÉCNICO DO CÁVADO E DO AVE           //
 //      ENGENHARIA DE SISTEMAS INFORMÁTICOS (PL) 2015/2016      //
 //                                                              //
-//                      TRABALHO PRÁTICO 1                      //
+//                      TRABALHO PRÁTICO 2                      //
 //                     VISÃO POR COMPUTADOR                     //
 //                                                              //
-//                   A3893  - ANDRÉ FERNANDES                   //
-//                    A11198 - ANDRÉ MARTINS                    //
+//                   A3893 - ANDRÉ FERNANDES                    //
+//                   A11198 - ANDRÉ MARTINS                     //
 //                   A11201 - ÂNGELO FERREIRA                   //
 //                                                              //
 //////////////////////////////////////////////////////////////////
 
 
 #define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -1205,113 +1204,10 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 	return 1;
 }
 
-// filtrar dependendo do modo: azul, amarelo, azul e amarelo
-// passa para branco, tudo o resto a preto
-int vc_rgb_to_hsv_filter2(IVC *srcdst, float min, float max)
-{
-	unsigned char *data = (unsigned char *)srcdst->data;
-	int width = srcdst->width;
-	int height = srcdst->height;
-	int bytesperline = srcdst->bytesperline;
-	int channels = srcdst->channels;
-
-	float r, g, b, hue, saturation, value;
-	float rgb_max, rgb_min;
-	int i, size;
-
-	// Verificação de erros
-	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
-	if (channels != 3) return 0;
-
-	size = width * height * channels;
-
-	/*	printf("%d - ", channels);*/
-
-	//float med = min;
-	float med = max - min;
-
-	for (i = 0; i < size; i = i + channels)
-	{
-		hue = (float)data[i];
-		saturation = (float)data[i + 1];
-		value = (float)data[i + 2];
-
-		// filtrar azul e amarelo
-		if (saturation == min)
-		{
-			data[i] = 255; // branco 
-			data[i + 1] = 0; // branco
-			data[i + 2] = 0; // branco
-		}
-		/*else if (saturation >= max-min) */ // +/- a funcionar
-		else if (saturation >= med) 
-		{
-			data[i] = 0; // branco 
-			data[i + 1] = 255; // branco
-			data[i + 2] = 0; // branco
-		}
-		else
-		{
-			data[i] = 0; // preto
-			data[i + 1] = 0; // preto
-			data[i + 2] = 0; // preto
-		}		
-	}
-	return 1;
-}
 
 
-float vc_min_max(IVC *srcdst, float min_max, int modeFilter)
-{
-	unsigned char *data = (unsigned char *)srcdst->data;
-	int width = srcdst->width;
-	int height = srcdst->height;
-	int bytesperline = srcdst->bytesperline;
-	int channels = srcdst->channels;
 
-	float r, g, b, hue, saturation, value;
-	float rgb_max, rgb_min;
-	int i, size;
 
-	// Verificação de erros
-	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
-	if (channels != 3) return 0;
-
-	size = width * height * channels;
-
-	for (i = 0; i < size; i = i + channels)
-	{
-		hue = (float)data[i];
-		saturation = (float)data[i + 1];
-		value = (float)data[i + 2];
-		
-		// se modo = 0
-		// calcula minimo
-		if (modeFilter == 0)
-		{
-			// filtrar azul e amarelo
-			if (saturation < min_max && value != 0)
-			{
-				min_max = saturation;
-			}
-		}
-		// se modo = 1
-		// calcula maximo
-		else if (modeFilter == 1)
-		{
-			// filtrar azul e amarelo
-			if (saturation > min_max)
-			{
-				min_max = saturation;
-			}
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	return min_max;
-}
 
 
 // erode
@@ -1372,55 +1268,6 @@ int vc_binary_erode(IVC *src, IVC *dst, int kernel)
 }
 
 
-int vc_gray_to_binary_global_mean(IVC *srcdst)
-{
-	unsigned char *data = (unsigned char *)srcdst->data;
-	int width = srcdst->width;
-	int height = srcdst->height;
-	int bytesperline = srcdst->width * srcdst->channels;
-	int channels = srcdst->channels;
-	int x, y, soma = 0, tr;
-	long int pos;
-
-	//verificação de erros
-	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
-	if (channels != 1) return 0;
-
-	// inverter imagem rgb
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			pos = y * bytesperline + x * channels;
-
-			soma += data[pos];
-		}
-	}
-
-	tr = soma / (height*width);
-
-	y = 0; x = 0;
-
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			pos = y * bytesperline + x * channels;
-
-			if (data[pos] > tr)
-			{
-				data[pos] = 255;
-			}
-			else
-			{
-				data[pos] = 0;
-			}
-		}
-	}
-
-	return 1;
-
-}
 
 int vc_binary_dilate(IVC *src, IVC *dst, int kernel)
 {
@@ -1562,6 +1409,7 @@ int vc_gray_edge_sobel(IVC *src, IVC *dst, float th)
 }
 
 
+/*
 int vc_rgb_to_gray(IVC *src, IVC *dst)
 {
 	unsigned char *datasrc = (unsigned char *)src->data;
@@ -1599,77 +1447,201 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 			datadst[pos_dst] = (unsigned char)((rf + gf + bf) / 3.0);
 		}
 	}
-
 	return 1;
+}
+*/
 
+
+
+
+// passa por cor
+int vc_bgr_to_hsv_filter(IVC *srcdst)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
+
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		b = (float)data[i];
+		g = (float)data[i + 1];
+		r = (float)data[i + 2];
+
+		// Calcula valores maximo e minimo dos canais de cor R, G e B
+		rgb_max = (r > g ? (r > b ? r : b) : (g > b ? g : b));
+		rgb_min = (r < g ? (r < b ? r : b) : (g < b ? g : b));
+
+		// Value toma valores entre [0,255]
+		value = rgb_max;
+		if (value == 0.0)
+		{
+			hue = 0.0;
+			saturation = 0.0;
+		}
+		else
+		{
+			// Saturation toma valores entre [0,255]
+			saturation = ((rgb_max - rgb_min) / rgb_max) * (float) 255.0;
+
+			if (saturation == 0.0)
+			{
+				hue = 0.0;
+			}
+			else
+			{
+				// Hue toma valores entre [0,360]
+				if ((rgb_max == r) && (g >= b))
+				{
+					hue = 60.0f * (g - b) / (rgb_max - rgb_min);
+				}
+				else if ((rgb_max == r) && (b > g))
+				{
+					hue = 360.0f + 60.0f * (g - b) / (rgb_max - rgb_min);
+				}
+				else if (rgb_max == g)
+				{
+					hue = 120 + 60 * (b - r) / (rgb_max - rgb_min);
+				}
+				else /* rgb_max == b*/
+				{
+					hue = 240.0f + 60.0f * (r - g) / (rgb_max - rgb_min);
+				}
+			}
+		}
+		
+		// filtrar laranjas
+		if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
+		{
+			data[i] = hue; // branco 
+			data[i + 1] = saturation; // branco
+			data[i + 2] = value; // branco
+		}
+		else
+		{
+			data[i] = 0; // preto
+			data[i + 1] = 0; // preto
+			data[i + 2] = 0; // preto
+		}
+	}
+	return 1;
 }
 
+// calcular minimo ou maximo
+float vc_min_max(IVC *srcdst, float min_max, int mode)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
 
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
 
-////int vc_hsv_to_gray(IVC *src, IVC *dst)
-////{
-////	unsigned char *datasrc = (unsigned char *)src->data;
-////	int bytesperline_src = src->width * src->channels;
-////	int channels_src = src->channels;
-////
-////	unsigned char *datadst = (unsigned char *)dst->data;
-////	int bytesperline_dst = dst->width * dst->channels;
-////	int channels_dst = dst->channels;
-////
-////	int width = src->width;
-////	int height = src->height;
-////
-////
-////	float r, g, b, hue, saturation, value;
-////	float rgb_max, rgb_min;
-////	int i, size;
-////
-////	int x, y;
-////	long int pos_src, pos_dst;
-////	float rf, gf, bf;
-////	
-////	// Verificação de erros
-////	/*
-////	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
-////	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
-////	if ((src->channels != 3) || (dst->channels != 1)) return 0;*/
-////
-////	size = width * height * channels_src;	
-////
-////	for (i = 0; i < size; i = i + channels_src)
-////	{
-////		hue = (float)datasrc[i];
-////		saturation = (float)datasrc[i + 1];
-////		value = (float)datasrc[i + 2];
-////		
-////		if (size == 1)
-////		{
-////			pos_dst = 1;
-////			printf("1\n");
-////			system("pause");
-////		}
-////		else
-////		{
-////			pos_dst = size / channels_src;
-////			//printf("%d - %d\n", pos_dst, size);
-////		}
-////
-////		if (hue == 255)
-////		{
-////			datadst[pos_dst] = 150;
-////		}
-////		else if (saturation == 255)
-////		{
-////			datadst[pos_dst] = 255;
-////		}
-////		else
-////		{
-////			datadst[pos_dst] = 0;
-////		}
-////	}
-////	return 1;
-////}
-int vc_hsv_to_gray(IVC *src, IVC *dst)
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		hue = (float)data[i];
+		saturation = (float)data[i + 1];
+		value = (float)data[i + 2];
+
+		// se modo = 0
+		// calcula minimo
+		if (mode == 0)
+		{
+			// filtrar azul e amarelo
+			if (saturation < min_max && value != 0)
+			{
+				min_max = saturation;
+			}
+		}
+		// se modo = 1
+		// calcula maximo
+		else if (mode == 1)
+		{
+			// filtrar azul e amarelo
+			if (saturation > min_max)
+			{
+				min_max = saturation;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	return min_max;
+}
+
+// filtrar pelo min, media e max
+int vc_min_max_filter(IVC *srcdst, float min, float max)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
+
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	float med = max - min;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		hue = (float)data[i];
+		saturation = (float)data[i + 1];
+		value = (float)data[i + 2];
+
+		if (saturation == min)
+		{
+			data[i] = 255;
+			data[i + 1] = 0;
+			data[i + 2] = 0;
+		}
+		else if (saturation >= med)
+		{
+			data[i] = 0;
+			data[i + 1] = 255;
+			data[i + 2] = 0;
+		}
+		else
+		{
+			data[i] = 0;
+			data[i + 1] = 0;
+			data[i + 2] = 0;
+		}
+	}
+	return 1;
+}
+
+// passar para cinza
+int vc_img_to_gray(IVC *src, IVC *dst)
 {
 	unsigned char *datasrc = (unsigned char *)src->data;
 	int bytesperline_src = src->width * src->channels;
@@ -1689,7 +1661,7 @@ int vc_hsv_to_gray(IVC *src, IVC *dst)
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
 	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
 	if ((src->channels != 3) || (dst->channels != 1)) return 0;
-
+	
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
@@ -1700,10 +1672,7 @@ int vc_hsv_to_gray(IVC *src, IVC *dst)
 			rf = (float)datasrc[pos_src];
 			gf = (float)datasrc[pos_src + 1];
 			bf = (float)datasrc[pos_src + 2];
-
-			//datadst[pos_dst] = (unsigned char) ((rf * 0.299) + (gf * 0.587) + (bf * 0.114));
-			//datadst[pos_dst] = (unsigned char)((rf + gf + bf) / 3.0);
-			
+						
 			if (rf == 255)
 			{
 				datadst[pos_dst] = 150;				
@@ -1720,3 +1689,181 @@ int vc_hsv_to_gray(IVC *src, IVC *dst)
 	}
 	return 1;
 }
+
+// passar para binario
+int vc_gray_to_binary_global_mean(IVC *srcdst)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->width * srcdst->channels;
+	int channels = srcdst->channels;
+	int x, y, soma = 0, tr;
+	long int pos;
+
+	//verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 1) return 0;
+
+	// inverter imagem rgb
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			soma += data[pos];
+		}
+	}
+
+	tr = soma / (height*width);
+
+	y = 0; x = 0;
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos = y * bytesperline + x * channels;
+
+			if (data[pos] > tr)
+			{
+				data[pos] = 255;
+			}
+			else
+			{
+				data[pos] = 0;
+			}
+		}
+	}
+	return 1;
+}
+
+// passar para frame
+// passar para cinza
+int vc_pix_to_frame(IVC *src, IVC *dst)
+{
+	unsigned char *datasrc = (unsigned char *)src->data;
+	int bytesperline_src = src->width * src->channels;
+	int channels_src = src->channels;
+
+	unsigned char *datadst = (unsigned char *)dst->data;
+	int bytesperline_dst = dst->width * dst->channels;
+	int channels_dst = dst->channels;
+
+	int width = src->width;
+	int height = src->height;
+	int x, y;
+	long int pos_src, pos_dst;
+	float rf, gf, bf;
+
+	// verificação de erros
+	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
+	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
+	if ((src->channels != 1) || (dst->channels != 3)) return 0;
+
+	system("pause");
+
+	for (y = 0; y < height; y++)
+	{
+		for (x = 0; x < width; x++)
+		{
+			pos_src = y * bytesperline_src + x * channels_src;
+			pos_dst = y * bytesperline_dst + x * channels_dst;
+
+			//rf = (float)datasrc[pos_src];
+			//gf = (float)datasrc[pos_src + 1];
+			//bf = (float)datasrc[pos_src + 2];
+
+			if ((float)datasrc[pos_src] == 255)
+			{
+				datadst[pos_dst] = 255;
+				datadst[pos_dst + 1] = 255;
+				datadst[pos_dst + 2] = 255;
+			}
+		}
+	}
+	return 1;
+}
+////int vc_bgr_to_hsv_filter(IVC *srcdst)
+////{
+////	unsigned char *data = (unsigned char *)srcdst->data;
+////	int width = srcdst->width;
+////	int height = srcdst->height;
+////	int bytesperline = srcdst->bytesperline;
+////	int channels = srcdst->channels;
+////
+////	float r, g, b, hue, saturation, value;
+////	float rgb_max, rgb_min;
+////	int i, size;
+////
+////	// Verificação de erros
+////	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+////	if (channels != 3) return 0;
+////
+////	size = width * height * channels;
+////
+////	for (i = 0; i < size; i = i + channels)
+////	{
+////		b = (float)data[i];
+////		g = (float)data[i + 1];
+////		r = (float)data[i + 2];
+////
+////		// Calcula valores maximo e minimo dos canais de cor R, G e B
+////		rgb_max = (r > g ? (r > b ? r : b) : (g > b ? g : b));
+////		rgb_min = (r < g ? (r < b ? r : b) : (g < b ? g : b));
+////
+////		// Value toma valores entre [0,255]
+////		value = rgb_max;
+////		if (value == 0.0)
+////		{
+////			hue = 0.0;
+////			saturation = 0.0;
+////		}
+////		else
+////		{
+////			// Saturation toma valores entre [0,255]
+////			saturation = ((rgb_max - rgb_min) / rgb_max) * (float) 255.0;
+////
+////			if (saturation == 0.0)
+////			{
+////				hue = 0.0;
+////			}
+////			else
+////			{
+////				// Hue toma valores entre [0,360]
+////				if ((rgb_max == r) && (g >= b))
+////				{
+////					hue = 60.0f * (g - b) / (rgb_max - rgb_min);
+////				}
+////				else if ((rgb_max == r) && (b > g))
+////				{
+////					hue = 360.0f + 60.0f * (g - b) / (rgb_max - rgb_min);
+////				}
+////				else if (rgb_max == g)
+////				{
+////					hue = 120 + 60 * (b - r) / (rgb_max - rgb_min);
+////				}
+////				else /* rgb_max == b*/
+////				{
+////					hue = 240.0f + 60.0f * (r - g) / (rgb_max - rgb_min);
+////				}
+////			}
+////		}
+////
+////		// filtrar laranjas
+////		if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
+////		{
+////			data[i] = hue; // branco 
+////			data[i + 1] = saturation; // branco
+////			data[i + 2] = value; // branco
+////		}
+////		else
+////		{
+////			data[i] = 0; // preto
+////			data[i + 1] = 0; // preto
+////			data[i + 2] = 0; // preto
+////		}
+////	}
+////	return 1;
+////}
