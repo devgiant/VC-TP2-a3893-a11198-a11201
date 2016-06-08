@@ -687,9 +687,9 @@ int vc_hsv_locate_plate(IVC *src, IVC *dst, int modeFilter)
 	// percorrer matriz da imagem para verificar e guardar posições
 	// modo de filtragem usada para definir primeira/ultima linha/coluna
 	// flag usada para avançar quando ja encontrou o primeiro
-	for (y = 0; y<height; y++)
+	for (y = 0; y < height; y++)
 	{
-		for (x = 0; x<width; x++)
+		for (x = 0; x < width; x++)
 		{
 			// posicao
 			pos = y * bytesperline + x * channels;
@@ -883,27 +883,27 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 	// Todos os pix�is de primeiro plano devem obrigat�riamente ter valor 255
 	// Ser�o atribu�das etiquetas no intervalo [1,254]
 	// Este algoritmo est� assim limitado a 254 labels
-	for (i = 0, size = bytesperline * height; i<size; i++)
+	for (i = 0, size = bytesperline * height; i < size; i++)
 	{
 		if (datadst[i] != 0) datadst[i] = 255;
 	}
 
 	// Limpa os rebordos da imagem bin�ria
-	for (y = 0; y<height; y++)
+	for (y = 0; y < height; y++)
 	{
 		datadst[y * bytesperline + 0 * channels] = 0;
 		datadst[y * bytesperline + (width - 1) * channels] = 0;
 	}
-	for (x = 0; x<width; x++)
+	for (x = 0; x < width; x++)
 	{
 		datadst[0 * bytesperline + x * channels] = 0;
 		datadst[(height - 1) * bytesperline + x * channels] = 0;
 	}
 
 	// Efectua a etiquetagem
-	for (y = 1; y<height - 1; y++)
+	for (y = 1; y < height - 1; y++)
 	{
-		for (x = 1; x<width - 1; x++)
+		for (x = 1; x < width - 1; x++)
 		{
 			// Kernel:
 			// A B C
@@ -954,7 +954,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 					{
 						if (labeltable[datadst[posA]] != labeltable[num])
 						{
-							for (a = 1; a<label; a++)
+							for (a = 1; a < label; a++)
 							{
 								if (labeltable[a] == labeltable[datadst[posA]])
 								{
@@ -967,7 +967,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 					{
 						if (labeltable[datadst[posB]] != labeltable[num])
 						{
-							for (a = 1; a<label; a++)
+							for (a = 1; a < label; a++)
 							{
 								if (labeltable[a] == labeltable[datadst[posB]])
 								{
@@ -980,7 +980,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 					{
 						if (labeltable[datadst[posC]] != labeltable[num])
 						{
-							for (a = 1; a<label; a++)
+							for (a = 1; a < label; a++)
 							{
 								if (labeltable[a] == labeltable[datadst[posC]])
 								{
@@ -993,7 +993,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 					{
 						if (labeltable[datadst[posD]] != labeltable[num])
 						{
-							for (a = 1; a<label; a++)
+							for (a = 1; a < label; a++)
 							{
 								if (labeltable[a] == labeltable[datadst[posD]])
 								{
@@ -1012,9 +1012,9 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 	}
 
 	// Volta a etiquetar a imagem
-	for (y = 1; y<height - 1; y++)
+	for (y = 1; y < height - 1; y++)
 	{
-		for (x = 1; x<width - 1; x++)
+		for (x = 1; x < width - 1; x++)
 		{
 			posX = y * bytesperline + x * channels; // X
 
@@ -1027,16 +1027,16 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 
 	// Contagem do n�mero de blobs
 	// Passo 1: Eliminar, da tabela, etiquetas repetidas
-	for (a = 1; a<label - 1; a++)
+	for (a = 1; a < label - 1; a++)
 	{
-		for (b = a + 1; b<label; b++)
+		for (b = a + 1; b < label; b++)
 		{
 			if (labeltable[a] == labeltable[b]) labeltable[b] = 0;
 		}
 	}
 	// Passo 2: Conta etiquetas e organiza a tabela de etiquetas, para que n�o hajam valores vazios (zero) entre etiquetas
 	*nlabels = 0;
-	for (a = 1; a<label; a++)
+	for (a = 1; a < label; a++)
 	{
 		if (labeltable[a] != 0)
 		{
@@ -1052,7 +1052,7 @@ OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels)
 	blobs = (OVC *)calloc((*nlabels), sizeof(OVC));
 	if (blobs != NULL)
 	{
-		for (a = 0; a<(*nlabels); a++) blobs[a].label = labeltable[a];
+		for (a = 0; a < (*nlabels); a++) blobs[a].label = labeltable[a];
 	}
 	else return NULL;
 
@@ -1080,8 +1080,8 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 
 	size = width * height * channels;
 
-/*	printf("%d - ", channels);*/
-	
+	/*	printf("%d - ", channels);*/
+
 	for (i = 0; i < size; i = i + channels)
 	{
 		b = (float)data[i];
@@ -1129,8 +1129,8 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 				}
 			}
 		}
-			
-		
+
+
 		// se modo = 0 então filtra azul e amarelo
 		if (modeFilter == 0)
 		{
@@ -1161,7 +1161,7 @@ int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter)
 			// filtrar vermelho/laranja escuro
 			/*if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 50) && (value / 255.0*100.0 >= 45))
 			{
-				data[i] = 0; // preto 
+				data[i] = 0; // preto
 				data[i + 1] = 0; // preto
 				data[i + 2] = 0; // preto
 			}
@@ -1452,7 +1452,38 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 */
 
 
+// copiar
+int vc_change_rgb(IVC *srcdst)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
 
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		b = (float)data[i];
+		g = (float)data[i + 1];
+		r = (float)data[i + 2];
+
+
+		data[i] = r;
+		data[i + 1] = g;
+		data[i + 2] = b;
+	}
+	return 1;
+}
 
 // passa por cor
 int vc_bgr_to_hsv_filter(IVC *srcdst)
@@ -1520,7 +1551,7 @@ int vc_bgr_to_hsv_filter(IVC *srcdst)
 				}
 			}
 		}
-		
+
 		// filtrar laranjas
 		if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
 		{
@@ -1661,7 +1692,7 @@ int vc_img_to_gray(IVC *src, IVC *dst)
 	if ((src->width <= 0) || (src->height <= 0) || (src->data == NULL)) return 0;
 	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
 	if ((src->channels != 3) || (dst->channels != 1)) return 0;
-	
+
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
@@ -1672,10 +1703,10 @@ int vc_img_to_gray(IVC *src, IVC *dst)
 			rf = (float)datasrc[pos_src];
 			gf = (float)datasrc[pos_src + 1];
 			bf = (float)datasrc[pos_src + 2];
-						
+
 			if (rf == 255)
 			{
-				datadst[pos_dst] = 150;				
+				datadst[pos_dst] = 150;
 			}
 			else if (gf == 255)
 			{
@@ -1762,7 +1793,7 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
 	if ((src->channels != 1) || (dst->channels != 3)) return 0;
 
-	system("pause");
+	//system("pause");
 
 	for (y = 0; y < height; y++)
 	{
@@ -1770,6 +1801,8 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 		{
 			pos_src = y * bytesperline_src + x * channels_src;
 			pos_dst = y * bytesperline_dst + x * channels_dst;
+
+			
 
 			//rf = (float)datasrc[pos_src];
 			//gf = (float)datasrc[pos_src + 1];
@@ -1780,7 +1813,16 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 				datadst[pos_dst] = 255;
 				datadst[pos_dst + 1] = 255;
 				datadst[pos_dst + 2] = 255;
-			}
+
+				//printf("%d / %d \n", pos_src, pos_dst);
+			}/*
+			else
+			{
+				datadst[pos_dst] = 255;
+				datadst[pos_dst + 1] = 100;
+				datadst[pos_dst + 2] = 100;
+				//printf("%f / %f / %f --- ", datadst[pos_dst], datadst[pos_dst + 1], datadst[pos_dst + 2]);
+			}*/
 		}
 	}
 	return 1;

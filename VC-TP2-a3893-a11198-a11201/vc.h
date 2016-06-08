@@ -100,7 +100,8 @@ int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th);
 
 
 
-
+// copiar
+int vc_change_rgb(IVC *srcdst);
 
 // filtragem por cor
 int vc_bgr_to_hsv_filter(IVC *srcdst);

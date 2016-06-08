@@ -23,9 +23,10 @@
 int main(int argc, char **argv) {
 	// Vídeo
 	char *videofile = "../VC-TP2_Enunciado/video-tp2.avi";
+	CvCapture *captureOrig;
 	CvCapture *capture;
+	IplImage *frameOrig;
 	IplImage *frame;
-	IplImage *frameAUX;
 
 	struct {
 		int width, height;
@@ -51,23 +52,24 @@ int main(int argc, char **argv) {
 	float max = 0;
 
 	/* Leitura de vídeo de um ficheiro */
+	captureOrig = cvCaptureFromFile(videofile);
 	capture = cvCaptureFromFile(videofile);
 
 	/* Verifica se foi possível abrir o ficheiro de vídeo */
-	if (!capture) {
+	if (!captureOrig || !capture) {
 		fprintf(stderr, "Erro ao abrir o ficheiro de vídeo!\n");
 		return 1;
 	}
 
 	/* Número total de frames no vídeo */
-	video.ntotalframes = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
+	video.ntotalframes = (int)cvGetCaptureProperty(captureOrig, CV_CAP_PROP_FRAME_COUNT);
 
 	/* Frame rate do vídeo */
-	video.fps = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	video.fps = (int)cvGetCaptureProperty(captureOrig, CV_CAP_PROP_FPS);
 
 	/* Resolução do vídeo */
-	video.width = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH);
-	video.height = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT);
+	video.width = (int)cvGetCaptureProperty(captureOrig, CV_CAP_PROP_FRAME_WIDTH);
+	video.height = (int)cvGetCaptureProperty(captureOrig, CV_CAP_PROP_FRAME_HEIGHT);
 
 	/* Cria uma janela para exibir o vídeo */
 	cvNamedWindow("VC - TP2", CV_WINDOW_AUTOSIZE);
@@ -86,14 +88,15 @@ int main(int argc, char **argv) {
 		}
 
 		// Leitura de uma frame do vídeo
+		frameOrig = cvQueryFrame(captureOrig);
 		frame = cvQueryFrame(capture);
-		frameAUX = cvQueryFrame(capture);
 
 		// Verifica se conseguiu ler a frame
+		if (!frameOrig) break;
 		if (!frame) break;
 
 		// Número da frame a processar
-		video.nframe = (int)cvGetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES);
+		video.nframe = (int)cvGetCaptureProperty(captureOrig, CV_CAP_PROP_POS_FRAMES);
 
 		//cvShowImage("VC - TP2_2", frame);
 
@@ -101,36 +104,71 @@ int main(int argc, char **argv) {
 		if (off_on == 1)
 		{
 			// frame para IVC
-			IVC *newFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
-			IVC *newFrame_gray = vc_image_new(frame->width, frame->height, 1, 255);
-			IVC *newFrame_bin = vc_image_new(frame->width, frame->height, 1, 255);
+			IVC *ivcFrameOrig = vc_image_new(frameOrig->width, frameOrig->height, frameOrig->nChannels, frameOrig->depth);
 
-			newFrame->data = frame->imageData;
-			newFrame->bytesperline = frame->width*frame->nChannels;
+			ivcFrameOrig->data = frameOrig->imageData;
+			ivcFrameOrig->bytesperline = frameOrig->width*frameOrig->nChannels;
+
+			
+
+			// frame para IVC			
+			IVC *ivcFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
+			IVC *ivcFrame_gray = vc_image_new(frame->width, frame->height, 1, 255);
+			IVC *ivcFrame_bin = vc_image_new(frame->width, frame->height, 1, 255);
+			
+
+			ivcFrame->data = frame->imageData;
+			ivcFrame->bytesperline = frame->width*frame->nChannels;
+			
+			
+
+			
+
+			
+			
+			//vc_pix_to_frame(ivcFrame_gray, frameOrig);
 
 			// filtragem por cor
-			vc_bgr_to_hsv_filter(newFrame);
+			vc_bgr_to_hsv_filter(ivcFrame);
 
-			min = vc_min_max(newFrame, min, 0);
-			max = vc_min_max(newFrame, max, 1);
+			
+
+			min = vc_min_max(ivcFrame, min, 0);
+			max = vc_min_max(ivcFrame, max, 1);
+
 
 			//printf("%f - %f \n", min, max);
 
-			vc_min_max_filter(newFrame, min, max);
+			vc_min_max_filter(ivcFrame, min, max);
 
-			vc_img_to_gray(newFrame, newFrame_gray);
+			vc_img_to_gray(ivcFrame, ivcFrame_gray);
 
-			vc_gray_to_binary_global_mean(newFrame_gray);
+			vc_gray_to_binary_global_mean(ivcFrame_gray);
 
-			//vc_binary_erode(newFrame_gray, newFrame_bin, 25);
+			//vc_binary_erode(ivcFrame_gray, ivcFrame_bin, 25);
 
 			//cvShowImage("VC - TP2_3", frame);
 
 
-			/* apagar isto */
-			vc_write_image("gray_combin.ppm", newFrame_gray);
+			//vc_pix_to_frame(ivcFrame_gray, ivcFrame);
+			
 
-			//vc_pix_to_frame(newFrame_bin, newFrame_2);
+			
+			vc_pix_to_frame(ivcFrame_gray, ivcFrameOrig);
+
+			
+
+			
+
+			
+
+			/* Exibe a frame */
+			cvShowImage("VC - TP2_2", frameOrig);
+
+			/* apagar isto */
+			vc_change_rgb(ivcFrameOrig);
+			vc_write_image("_teste.ppm", ivcFrameOrig);
+			
 		}
 
 		/* Exemplo de inserção texto na frame */
@@ -153,10 +191,11 @@ int main(int argc, char **argv) {
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frame);
 
+		
 
 
 
-		//vc_write_image("Gray_Image.ppm", newFrame);
+		//vc_write_image("Gray_Image.ppm", ivcFrame);
 		//IplImage *im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
 		//IplImage *im_gray2 = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
 
@@ -164,19 +203,19 @@ int main(int argc, char **argv) {
 		IVC *im_gray2;
 
 		im_gray = vc_read_image("Gray_Image.ppm");
-		im_gray2 = vc_image_new(newFrame->width, newFrame->height, 1, 255);*/
+		im_gray2 = vc_image_new(ivcFrame->width, ivcFrame->height, 1, 255);*/
 
-		//vc_rgb_to_gray(newFrame, im_gray2);
+		//vc_rgb_to_gray(ivcFrame, im_gray2);
 		//vc_gray_to_binary_global_mean(im_gray);
 
 		//vc_binary_erode(im_gray, im_gray2, 1000);
 		//vc_binary_dilate(im_gray, im_gray2, 9);
 
-		//vc_rgb_to_hsv_filter2(newFrame, 2);
+		//vc_rgb_to_hsv_filter2(ivcFrame, 2);
 
-		//vc_write_image("Gray_Image.ppm",newFrame);
+		//vc_write_image("Gray_Image.ppm",ivcFrame);
 
-		//cvSaveImage("Gray_Image.ppm", newFrame, 0);
+		//cvSaveImage("Gray_Image.ppm", ivcFrame, 0);
 		/*IplImage* im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
 
 
@@ -186,15 +225,15 @@ int main(int argc, char **argv) {
 
 		vc_gray_edge_sobel(im_bw, im_gray, 1);*/
 
-		//vc_rgb_to_gray(newFrame, newFrame2);
+		//vc_rgb_to_gray(ivcFrame, newFrame2);
 
-		//vc_gray_edge_sobel(newFrame2, newFrame, 10);
+		//vc_gray_edge_sobel(newFrame2, ivcFrame, 10);
 
 		//vc_gray_to_binary_global_mean(newFrame2);
 
 
 
-		//vc_binary_blob_labelling(newFrame, frame, count);
+		//vc_binary_blob_labelling(ivcFrame, frame, count);
 
 
 
@@ -265,7 +304,7 @@ int main(int argc, char **argv) {
 
 
 
-		//vc_image_free(newFrame);
+		//vc_image_free(ivcFrame);
 
 
 
