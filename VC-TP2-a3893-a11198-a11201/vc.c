@@ -1452,38 +1452,7 @@ int vc_rgb_to_gray(IVC *src, IVC *dst)
 */
 
 
-// copiar
-int vc_change_rgb(IVC *srcdst)
-{
-	unsigned char *data = (unsigned char *)srcdst->data;
-	int width = srcdst->width;
-	int height = srcdst->height;
-	int bytesperline = srcdst->bytesperline;
-	int channels = srcdst->channels;
 
-	float r, g, b, hue, saturation, value;
-	float rgb_max, rgb_min;
-	int i, size;
-
-	// Verificação de erros
-	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
-	if (channels != 3) return 0;
-
-	size = width * height * channels;
-
-	for (i = 0; i < size; i = i + channels)
-	{
-		b = (float)data[i];
-		g = (float)data[i + 1];
-		r = (float)data[i + 2];
-
-
-		data[i] = r;
-		data[i + 1] = g;
-		data[i + 2] = b;
-	}
-	return 1;
-}
 
 // passa por cor
 int vc_bgr_to_hsv_filter(IVC *srcdst)
@@ -1770,8 +1739,7 @@ int vc_gray_to_binary_global_mean(IVC *srcdst)
 	return 1;
 }
 
-// passar para frame
-// passar para cinza
+// passar binario (apenas 255) para imagem
 int vc_pix_to_frame(IVC *src, IVC *dst)
 {
 	unsigned char *datasrc = (unsigned char *)src->data;
@@ -1793,7 +1761,6 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 	if ((src->width != dst->width) || (src->height != dst->height)) return 0;
 	if ((src->channels != 1) || (dst->channels != 3)) return 0;
 
-	//system("pause");
 
 	for (y = 0; y < height; y++)
 	{
@@ -1801,12 +1768,6 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 		{
 			pos_src = y * bytesperline_src + x * channels_src;
 			pos_dst = y * bytesperline_dst + x * channels_dst;
-
-			
-
-			//rf = (float)datasrc[pos_src];
-			//gf = (float)datasrc[pos_src + 1];
-			//bf = (float)datasrc[pos_src + 2];
 
 			if ((float)datasrc[pos_src] == 255)
 			{
@@ -1827,85 +1788,36 @@ int vc_pix_to_frame(IVC *src, IVC *dst)
 	}
 	return 1;
 }
-////int vc_bgr_to_hsv_filter(IVC *srcdst)
-////{
-////	unsigned char *data = (unsigned char *)srcdst->data;
-////	int width = srcdst->width;
-////	int height = srcdst->height;
-////	int bytesperline = srcdst->bytesperline;
-////	int channels = srcdst->channels;
-////
-////	float r, g, b, hue, saturation, value;
-////	float rgb_max, rgb_min;
-////	int i, size;
-////
-////	// Verificação de erros
-////	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
-////	if (channels != 3) return 0;
-////
-////	size = width * height * channels;
-////
-////	for (i = 0; i < size; i = i + channels)
-////	{
-////		b = (float)data[i];
-////		g = (float)data[i + 1];
-////		r = (float)data[i + 2];
-////
-////		// Calcula valores maximo e minimo dos canais de cor R, G e B
-////		rgb_max = (r > g ? (r > b ? r : b) : (g > b ? g : b));
-////		rgb_min = (r < g ? (r < b ? r : b) : (g < b ? g : b));
-////
-////		// Value toma valores entre [0,255]
-////		value = rgb_max;
-////		if (value == 0.0)
-////		{
-////			hue = 0.0;
-////			saturation = 0.0;
-////		}
-////		else
-////		{
-////			// Saturation toma valores entre [0,255]
-////			saturation = ((rgb_max - rgb_min) / rgb_max) * (float) 255.0;
-////
-////			if (saturation == 0.0)
-////			{
-////				hue = 0.0;
-////			}
-////			else
-////			{
-////				// Hue toma valores entre [0,360]
-////				if ((rgb_max == r) && (g >= b))
-////				{
-////					hue = 60.0f * (g - b) / (rgb_max - rgb_min);
-////				}
-////				else if ((rgb_max == r) && (b > g))
-////				{
-////					hue = 360.0f + 60.0f * (g - b) / (rgb_max - rgb_min);
-////				}
-////				else if (rgb_max == g)
-////				{
-////					hue = 120 + 60 * (b - r) / (rgb_max - rgb_min);
-////				}
-////				else /* rgb_max == b*/
-////				{
-////					hue = 240.0f + 60.0f * (r - g) / (rgb_max - rgb_min);
-////				}
-////			}
-////		}
-////
-////		// filtrar laranjas
-////		if (((hue >= 5) && (hue <= 30)) && (saturation / 255.0*100.0 >= 20) && (value / 255.0*100.0 >= 20))
-////		{
-////			data[i] = hue; // branco 
-////			data[i + 1] = saturation; // branco
-////			data[i + 2] = value; // branco
-////		}
-////		else
-////		{
-////			data[i] = 0; // preto
-////			data[i + 1] = 0; // preto
-////			data[i + 2] = 0; // preto
-////		}
-////	}
-////	return 1;
-////}
+
+// trocar rgb <> bgr
+int vc_change_rgb(IVC *srcdst)
+{
+	unsigned char *data = (unsigned char *)srcdst->data;
+	int width = srcdst->width;
+	int height = srcdst->height;
+	int bytesperline = srcdst->bytesperline;
+	int channels = srcdst->channels;
+
+	float r, g, b, hue, saturation, value;
+	float rgb_max, rgb_min;
+	int i, size;
+
+	// Verificação de erros
+	if ((srcdst->width <= 0) || (srcdst->height <= 0) || (srcdst->data == NULL)) return 0;
+	if (channels != 3) return 0;
+
+	size = width * height * channels;
+
+	for (i = 0; i < size; i = i + channels)
+	{
+		b = (float)data[i];
+		g = (float)data[i + 1];
+		r = (float)data[i + 2];
+
+
+		data[i] = r;
+		data[i + 1] = g;
+		data[i + 2] = b;
+	}
+	return 1;
+}

@@ -100,8 +100,7 @@ int vc_gray_edge_prewitt(IVC *src, IVC *dst, float th);
 
 
 
-// copiar
-int vc_change_rgb(IVC *srcdst);
+
 
 // filtragem por cor
 int vc_bgr_to_hsv_filter(IVC *srcdst);
@@ -120,3 +119,6 @@ int vc_gray_to_binary_global_mean(IVC *srcdst);
 
 // passar para a frame
 int vc_pix_to_frame(IVC *src, IVC *dst);
+
+// trocar rgb <> bgr
+int vc_change_rgb(IVC *srcdst);

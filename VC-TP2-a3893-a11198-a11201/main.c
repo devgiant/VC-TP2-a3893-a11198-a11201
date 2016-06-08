@@ -103,47 +103,41 @@ int main(int argc, char **argv) {
 		// se modo caracterização
 		if (off_on == 1)
 		{
-			// frame para IVC
+			// frame original para IVC
 			IVC *ivcFrameOrig = vc_image_new(frameOrig->width, frameOrig->height, frameOrig->nChannels, frameOrig->depth);
 
 			ivcFrameOrig->data = frameOrig->imageData;
-			ivcFrameOrig->bytesperline = frameOrig->width*frameOrig->nChannels;
-
-			
+			ivcFrameOrig->bytesperline = frameOrig->width*frameOrig->nChannels;			
 
 			// frame para IVC			
 			IVC *ivcFrame = vc_image_new(frame->width, frame->height, frame->nChannels, frame->depth);
 			IVC *ivcFrame_gray = vc_image_new(frame->width, frame->height, 1, 255);
-			IVC *ivcFrame_bin = vc_image_new(frame->width, frame->height, 1, 255);
-			
+			IVC *ivcFrame_bin = vc_image_new(frame->width, frame->height, 1, 255);			
 
 			ivcFrame->data = frame->imageData;
 			ivcFrame->bytesperline = frame->width*frame->nChannels;
 			
-			
 
+			//
+			// tratamento 
+			//
 			
-
-			
-			
-			//vc_pix_to_frame(ivcFrame_gray, frameOrig);
-
 			// filtragem por cor
-			vc_bgr_to_hsv_filter(ivcFrame);
+			vc_bgr_to_hsv_filter(ivcFrame);			
 
-			
-
+			// calcular valores minimos e maximos
 			min = vc_min_max(ivcFrame, min, 0);
 			max = vc_min_max(ivcFrame, max, 1);
 
-
-			//printf("%f - %f \n", min, max);
-
+			// filtragem por minimos e maximos
 			vc_min_max_filter(ivcFrame, min, max);
 
+			// passagem para cinza
 			vc_img_to_gray(ivcFrame, ivcFrame_gray);
 
+			// passagem para binario
 			vc_gray_to_binary_global_mean(ivcFrame_gray);
+
 
 			//vc_binary_erode(ivcFrame_gray, ivcFrame_bin, 25);
 
@@ -153,20 +147,18 @@ int main(int argc, char **argv) {
 			//vc_pix_to_frame(ivcFrame_gray, ivcFrame);
 			
 
-			
+
+			/* teste */
+
+			// passar binario (apenas valor 255) para a imagem original
 			vc_pix_to_frame(ivcFrame_gray, ivcFrameOrig);
 
-			
+						
 
 			
 
-			
-
-			/* Exibe a frame */
-			cvShowImage("VC - TP2_2", frameOrig);
-
-			/* apagar isto */
-			vc_change_rgb(ivcFrameOrig);
+			/* teste: */
+			//vc_change_rgb(ivcFrameOrig);
 			vc_write_image("_teste.ppm", ivcFrameOrig);
 			
 		}
@@ -187,6 +179,9 @@ int main(int argc, char **argv) {
 		sprintf(str, "Canais: %d", frame->nChannels);
 		cvPutText(frame, str, cvPoint(20, 100), &fontbkg, cvScalar(0, 0, 0, 0));
 		cvPutText(frame, str, cvPoint(20, 100), &font, cvScalar(255, 0, 0, 0));
+
+		/* Exibe a frame */
+		cvShowImage("VC - TP2_2", frameOrig);
 
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frame);
