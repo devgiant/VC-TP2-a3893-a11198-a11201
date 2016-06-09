@@ -45,11 +45,15 @@ int main(int argc, char **argv) {
 	// Outros
 	int key = 0;
 	int off_on = 1; // inicia a fazer categorização
+	int nblobs;
 
 	int count = 0;
 
 	float min = 1000;
 	float max = 0;
+
+	int i;
+	OVC *blobs;
 
 	/* Leitura de vídeo de um ficheiro */
 	captureOrig = cvCaptureFromFile(videofile);
@@ -133,29 +137,60 @@ int main(int argc, char **argv) {
 			vc_min_max_filter(ivcFrame, min, max);
 
 			// passagem para cinza
-			vc_img_to_gray(ivcFrame, ivcFrame_gray);
+			//vc_img_to_gray(ivcFrame, ivcFrame_gray);
+			vc_img_to_gray(ivcFrame, ivcFrame_bin);
 
 			// passagem para binario
-			vc_gray_to_binary_global_mean(ivcFrame_gray);
+			//vc_gray_to_binary_global_mean(ivcFrame_gray);
+			vc_gray_to_binary_global_mean(ivcFrame_bin);
 
+			// dilate
+			vc_binary_dilate(ivcFrame_bin, ivcFrame_gray, 20);
 
-			//vc_binary_erode(ivcFrame_gray, ivcFrame_bin, 25);
+			// blobs
+			blobs = vc_binary_blob_labelling(ivcFrame_gray, ivcFrame_bin, &nblobs);
 
-			//cvShowImage("VC - TP2_3", frame);
+			vc_binary_blob_info(ivcFrame_bin, blobs, nblobs);
+						
+			if (blobs != NULL)
+			{
+				int rad = 0, xr = 0, yr = 0;
+				
+				for (i = 0; i < nblobs; i++)
+				{
+					if (blobs[i].area > (ivcFrame_bin->width * ivcFrame_bin->height) / 25)
+					{
+						// raio
+						xr = (int)(blobs[i].xc - blobs[i].x);
+						yr = (int)(blobs[i].yc - blobs[i].y);
 
+						if (xr > yr) rad = xr; else rad = yr;
 
-			//vc_pix_to_frame(ivcFrame_gray, ivcFrame);
-			
+						// inicio e fim do blob
+						if (((blobs[i].yc - rad) > 1) && ((blobs[i].yc + rad) < ivcFrame_bin->height))
+						{
+							system("cls");
+							printf("\nNumber of labels: %d\n\n", nblobs);
 
+							printf("-> Label %d\n", blobs[i].label);
+							printf("-> Area %d\n", blobs[i].area);
+							printf("-> Perimetro %d\n", blobs[i].perimeter);
+							printf("-> XC %d\n", blobs[i].xc);
+							printf("-> YC %d\n\n", blobs[i].yc);							
 
+							// desenhar o circulo
+							cvCircle(frameOrig, cvPoint(blobs[i].xc, blobs[i].yc), rad, cvScalar(0, 0, 255, 0), 4, 8, 0);
+						}
+					}					
+				}
+				//free(blobs);
+			}
+			//return blobs;
+						
 			/* teste */
 
 			// passar binario (apenas valor 255) para a imagem original
-			vc_pix_to_frame(ivcFrame_gray, ivcFrameOrig);
-
-						
-
-			
+			//vc_pix_to_frame(ivcFrame_gray, ivcFrameOrig);
 
 			/* teste: */
 			//vc_change_rgb(ivcFrameOrig);
@@ -184,128 +219,12 @@ int main(int argc, char **argv) {
 		cvShowImage("VC - TP2_2", frameOrig);
 
 		/* Exibe a frame */
-		cvShowImage("VC - TP2", frame);
-
-		
-
-
-
-		//vc_write_image("Gray_Image.ppm", ivcFrame);
-		//IplImage *im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
-		//IplImage *im_gray2 = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
-
-		/*IVC *im_gray;
-		IVC *im_gray2;
-
-		im_gray = vc_read_image("Gray_Image.ppm");
-		im_gray2 = vc_image_new(ivcFrame->width, ivcFrame->height, 1, 255);*/
-
-		//vc_rgb_to_gray(ivcFrame, im_gray2);
-		//vc_gray_to_binary_global_mean(im_gray);
-
-		//vc_binary_erode(im_gray, im_gray2, 1000);
-		//vc_binary_dilate(im_gray, im_gray2, 9);
-
-		//vc_rgb_to_hsv_filter2(ivcFrame, 2);
-
-		//vc_write_image("Gray_Image.ppm",ivcFrame);
-
-		//cvSaveImage("Gray_Image.ppm", ivcFrame, 0);
-		/*IplImage* im_gray = cvLoadImage("Gray_Image.ppm", CV_LOAD_IMAGE_GRAYSCALE);
-
-
-
-		IplImage* im_bw = cvCreateImage(cvGetSize(im_gray), IPL_DEPTH_8U, 1);
-		cvThreshold(im_gray, im_bw, 128, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-
-		vc_gray_edge_sobel(im_bw, im_gray, 1);*/
-
-		//vc_rgb_to_gray(ivcFrame, newFrame2);
-
-		//vc_gray_edge_sobel(newFrame2, ivcFrame, 10);
-
-		//vc_gray_to_binary_global_mean(newFrame2);
-
-
-
-		//vc_binary_blob_labelling(ivcFrame, frame, count);
-
-
-
-
-		//	typedef struct {
-		//	unsigned char *data;
-		//	int width, height;
-		//	int channels;			// Binario/Cinzentos=1; RGB=3
-		//	int levels;				// Binario=1; Cinzentos [1,255]; RGB [1,255]
-		//	int bytesperline;		// width * channels
-		//} IVC;
-
-
-		////IVC image[0] = frame;
-
-		////
-
-		////
-		//// Abrir imagem em grayscale, fazer a binariza��o manual, etiquetar os blobs e gravar em novo ficheiro
-
-		////	IVC *image[2];
-
-
-		////	int i, nblobs;
-		////	OVC *blobs;
-
-		////	/*image[0] = vc_read_image("Images/FLIR/flir-01.pgm");
-		////	if (image[0] == NULL)
-		////	{
-		////		printf("ERROR -> vc_read_image():\n\tFile not found!\n");
-		////		getchar();
-		////		return 0;
-		////	}*/
-
-		////	/*image[1] = vc_image_new(image[0]->width, image[0]->height, 1, 255);
-		////	if (image[1] == NULL)
-		////	{
-		////		printf("ERROR -> vc_image_new():\n\tOut of memory!\n");
-		////		getchar();
-		////		return 0;
-		////	}*/
-
-		////	vc_gray_to_binary(image[0], 127);
-		////	blobs = vc_binary_blob_labelling(frame, frameAUX, &nblobs);
-
-		////	if (blobs != NULL)
-		////	{
-		////		printf("\nNumber of labels: %d\n", nblobs);
-		////		for (i = 0; i<nblobs; i++)
-		////		{
-		////			printf("-> Label %d\n", blobs[i].label);
-		////		}
-
-		////		free(blobs);
-		////	}
-
-		////	/*vc_write_image("vc0022.pgm", frameAUX);
-
-		////	vc_image_free(image[0]);
-		////	vc_image_free(image[1]);
-
-		////	printf("Press any key to exit...\n");
-		////	getchar();
-
-		////	return 0;
-		////}*/
-
-
-
+		//cvShowImage("VC - TP2", frame);
 
 		//vc_image_free(ivcFrame);
 
-
-
-
 		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
-		key = cvWaitKey(20);
+		key = cvWaitKey(5);
 	}
 
 	/* Fecha a janela */
@@ -313,6 +232,5 @@ int main(int argc, char **argv) {
 
 	/* Fecha o ficheiro de vídeo */
 	cvReleaseCapture(&capture);
-
 	return 0;
 }

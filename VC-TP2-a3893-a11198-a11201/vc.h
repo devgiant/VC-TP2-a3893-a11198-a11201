@@ -77,8 +77,6 @@ int vc_rgb_to_hsv_filter_blue_yellow(IVC *srcdst, int modeFilter);
 // localizar matricula
 int vc_hsv_locate_plate(IVC *src, IVC *dst, int modeFilter);
 
-OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels);
-
 
 int vc_rgb_to_hsv_filter(IVC *srcdst, int modeFilter);
 
@@ -122,3 +120,9 @@ int vc_pix_to_frame(IVC *src, IVC *dst);
 
 // trocar rgb <> bgr
 int vc_change_rgb(IVC *srcdst);
+
+// Etiquetagem de blobs
+OVC* vc_binary_blob_labelling(IVC *src, IVC *dst, int *nlabels);
+
+// info blobs
+int vc_binary_blob_info(IVC *src, OVC *blobs, int nblobs);
