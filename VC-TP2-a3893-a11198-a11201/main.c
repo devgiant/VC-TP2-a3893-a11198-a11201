@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
 	/* Cria uma janela para exibir o vídeo */
 	cvNamedWindow("VC - TP2", CV_WINDOW_AUTOSIZE);
-	cvNamedWindow("VC - TP2_2", CV_WINDOW_AUTOSIZE);
+	// cvNamedWindow("VC - TP2 - work", CV_WINDOW_AUTOSIZE); // desligar para aparecer apenas video trabalhado
 
 	/* Inicializa a fonte */
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, hScale, vScale, 0, lineWidth, 0);
@@ -137,11 +137,9 @@ int main(int argc, char **argv) {
 			vc_min_max_filter(ivcFrame, min, max);
 
 			// passagem para cinza
-			//vc_img_to_gray(ivcFrame, ivcFrame_gray);
 			vc_img_to_gray(ivcFrame, ivcFrame_bin);
 
 			// passagem para binario
-			//vc_gray_to_binary_global_mean(ivcFrame_gray);
 			vc_gray_to_binary_global_mean(ivcFrame_bin);
 
 			// dilate
@@ -151,14 +149,15 @@ int main(int argc, char **argv) {
 			blobs = vc_binary_blob_labelling(ivcFrame_gray, ivcFrame_bin, &nblobs);
 
 			vc_binary_blob_info(ivcFrame_bin, blobs, nblobs);
-						
+			
+			system("cls");
 			if (blobs != NULL)
 			{
 				int rad = 0, xr = 0, yr = 0;
 				
 				for (i = 0; i < nblobs; i++)
 				{
-					if (blobs[i].area > (ivcFrame_bin->width * ivcFrame_bin->height) / 25)
+					if (blobs[i].area > ((ivcFrame_bin->width * ivcFrame_bin->height) / 10))
 					{
 						// raio
 						xr = (int)(blobs[i].xc - blobs[i].x);
@@ -168,15 +167,17 @@ int main(int argc, char **argv) {
 
 						// inicio e fim do blob
 						if (((blobs[i].yc - rad) > 1) && ((blobs[i].yc + rad) < ivcFrame_bin->height))
-						{
-							system("cls");
+						{							
 							printf("\nNumber of labels: %d\n\n", nblobs);
 
 							printf("-> Label %d\n", blobs[i].label);
 							printf("-> Area %d\n", blobs[i].area);
 							printf("-> Perimetro %d\n", blobs[i].perimeter);
 							printf("-> XC %d\n", blobs[i].xc);
-							printf("-> YC %d\n\n", blobs[i].yc);							
+							printf("-> YC %d\n\n", blobs[i].yc);
+
+							printf("-> frame div10 %d\n", (ivcFrame_bin->width * ivcFrame_bin->height) / 10);
+							printf("-> frame dif %d\n\n", ((ivcFrame_bin->width * ivcFrame_bin->height) / 10) - blobs[i].area);
 
 							// desenhar o circulo
 							cvCircle(frameOrig, cvPoint(blobs[i].xc, blobs[i].yc), rad, cvScalar(0, 0, 255, 0), 4, 8, 0);
@@ -216,15 +217,13 @@ int main(int argc, char **argv) {
 		cvPutText(frame, str, cvPoint(20, 100), &font, cvScalar(255, 0, 0, 0));
 
 		/* Exibe a frame */
-		cvShowImage("VC - TP2_2", frameOrig);
+		cvShowImage("VC - TP2", frameOrig);
 
-		/* Exibe a frame */
-		//cvShowImage("VC - TP2", frame);
-
-		//vc_image_free(ivcFrame);
+		/* Exibe a frame a trabalhar */
+		//cvShowImage("VC - TP2 - work", frame);
 
 		/* Sai da aplicação, se o utilizador premir a tecla 'q' */
-		key = cvWaitKey(5);
+		key = cvWaitKey(10);
 	}
 
 	/* Fecha a janela */
