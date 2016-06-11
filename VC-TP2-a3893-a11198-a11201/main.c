@@ -176,8 +176,12 @@ int main(int argc, char **argv) {
 							printf("-> XC %d\n", blobs[i].xc);
 							printf("-> YC %d\n\n", blobs[i].yc);
 
-							printf("-> frame div10 %d\n", (ivcFrame_bin->width * ivcFrame_bin->height) / 10);
-							printf("-> frame dif %d\n\n", ((ivcFrame_bin->width * ivcFrame_bin->height) / 10) - blobs[i].area);
+							sprintf(str, "Area: %d", blobs[i].area);
+							cvPutText(frameOrig, str, cvPoint(blobs[i].xc - 50, blobs[i].yc - 20), &fontbkg, cvScalar(0, 0, 0, 0));
+							cvPutText(frameOrig, str, cvPoint(blobs[i].xc - 50, blobs[i].yc - 20), &font, cvScalar(255, 0, 0, 0));
+							sprintf(str, "Perimetro: %d", blobs[i].perimeter);
+							cvPutText(frameOrig, str, cvPoint(blobs[i].xc - 50, blobs[i].yc), &fontbkg, cvScalar(0, 0, 0, 0));
+							cvPutText(frameOrig, str, cvPoint(blobs[i].xc - 50, blobs[i].yc), &font, cvScalar(255, 0, 0, 0));
 
 							// desenhar o circulo
 							cvCircle(frameOrig, cvPoint(blobs[i].xc, blobs[i].yc), rad, cvScalar(0, 0, 255, 0), 4, 8, 0);
@@ -201,20 +205,17 @@ int main(int argc, char **argv) {
 
 		/* Exemplo de inserção texto na frame */
 		sprintf(str, "RESOLUCAO: %dx%d", video.width, video.height);
-		cvPutText(frame, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0, 0));
-		cvPutText(frame, str, cvPoint(20, 20), &font, cvScalar(255, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 20), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 20), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "TOTAL DE FRAMES: %d", video.ntotalframes);
-		cvPutText(frame, str, cvPoint(20, 40), &fontbkg, cvScalar(0, 0, 0, 0));
-		cvPutText(frame, str, cvPoint(20, 40), &font, cvScalar(255, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 40), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 40), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "FRAME RATE: %d", video.fps);
-		cvPutText(frame, str, cvPoint(20, 60), &fontbkg, cvScalar(0, 0, 0, 0));
-		cvPutText(frame, str, cvPoint(20, 60), &font, cvScalar(255, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 60), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 60), &font, cvScalar(255, 0, 0, 0));
 		sprintf(str, "N. FRAME: %d", video.nframe);
-		cvPutText(frame, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0, 0));
-		cvPutText(frame, str, cvPoint(20, 80), &font, cvScalar(255, 0, 0, 0));
-		sprintf(str, "Canais: %d", frame->nChannels);
-		cvPutText(frame, str, cvPoint(20, 100), &fontbkg, cvScalar(0, 0, 0, 0));
-		cvPutText(frame, str, cvPoint(20, 100), &font, cvScalar(255, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 80), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(20, 80), &font, cvScalar(255, 0, 0, 0));
 
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frameOrig);
