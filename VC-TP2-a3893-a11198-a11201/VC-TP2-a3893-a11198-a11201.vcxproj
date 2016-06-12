@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lixo.c" />
     <ClCompile Include="vc.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
