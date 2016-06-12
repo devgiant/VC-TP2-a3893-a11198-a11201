@@ -266,6 +266,20 @@ int main(int argc, char **argv) {
 		cvPutText(frameOrig, str, cvPoint(20, 150), &fontbkg, cvScalar(0, 0, 0, 0));
 		cvPutText(frameOrig, str, cvPoint(20, 150), &font, cvScalar(255, 0, 0, 0));
 
+		//Shortcut Text
+		sprintf(str, "Shortcuts:", NULL);
+		cvPutText(frameOrig, str, cvPoint(1000, 25), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(1000, 25), &font, cvScalar(255, 0, 0, 0));
+		sprintf(str, "     Q - Quit", NULL);
+		cvPutText(frameOrig, str, cvPoint(1000, 50), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(1000, 50), &font, cvScalar(255, 0, 0, 0));
+		sprintf(str, "     Z - Stop Img Process", NULL);
+		cvPutText(frameOrig, str, cvPoint(1000, 75), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(1000, 75), &font, cvScalar(255, 0, 0, 0));
+		sprintf(str, "     P - Pause", NULL);
+		cvPutText(frameOrig, str, cvPoint(1000, 100), &fontbkg, cvScalar(0, 0, 0, 0));
+		cvPutText(frameOrig, str, cvPoint(1000, 100), &font, cvScalar(255, 0, 0, 0));
+
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frameOrig);
 
