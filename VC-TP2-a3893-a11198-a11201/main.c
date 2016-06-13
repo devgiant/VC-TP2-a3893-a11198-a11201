@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
 		// se modo caracterização
 		if (off_on == 1)
 		{
-			// limpar frame
+			// Homogeneização da imagem com recurso ao Filtro Mean Shift com o objectivo de simplificar a imagem
 			cvPyrMeanShiftFiltering(frameOrig, frame, 31, 51, 2, cvTermCriteria(CV_TERMCRIT_ITER, 6, 0.1));
 
 			// frame original para IVC
