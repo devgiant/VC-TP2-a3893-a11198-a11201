@@ -54,6 +54,8 @@ int main(int argc, char **argv) {
 	double rad = 0;
 	double area = 0;
 	double perimeter = 0;
+	char *save;
+	char saveAux[4];
 
 	int count = 0;
 	int nOrange = 0;
@@ -63,6 +65,7 @@ int main(int argc, char **argv) {
 	float min = 1000;
 	float max = 0;
 
+	int automatico = 0;
 	int i;
 	OVC *blobs;
 
@@ -104,6 +107,23 @@ int main(int argc, char **argv) {
 		else if (key == 'p') // pausa
 		{
 			key = 'w'; while (key != 'p') { key = cvWaitKey(10); }
+		}
+		else if (key == 'a' || automatico == 1) // apresentação
+		{
+			automatico = 1;
+			if (video.nframe <= 108) { off_on = 0; }
+			else if (video.nframe > 108 && video.nframe <= 122) { off_on = 1; }
+			else if (video.nframe > 122 && video.nframe <= 160) { off_on = 0; }
+			else if (video.nframe > 160 && video.nframe <= 170) { off_on = 1; }
+			else if (video.nframe > 170 && video.nframe <= 255) { off_on = 0; }
+			else if (video.nframe > 255 && video.nframe <= 268) { off_on = 1; }
+			else if (video.nframe > 268 && video.nframe <= 325) { off_on = 0; }
+			else if (video.nframe > 325 && video.nframe <= 360) { off_on = 1; }
+			else if (video.nframe > 350 && video.nframe <= 423) { off_on = 0; }
+			else if (video.nframe > 423 && video.nframe <= 433) { off_on = 1; }
+			else if (video.nframe > 433 && video.nframe <= 480) { off_on = 0; }
+			else if (video.nframe > 480 && video.nframe <= 490) { off_on = 1; }
+			else if (video.nframe > 490) { off_on = 0; }
 		}
 
 		// Leitura de uma frame do vídeo
@@ -283,6 +303,15 @@ int main(int argc, char **argv) {
 		/* Exibe a frame */
 		cvShowImage("VC - TP2", frameOrig);
 
+		// salvar frames
+		/*save = (char *)malloc(10 + strlen(saveAux) + 5);
+		strcpy(save, "vc_tp_");
+		sprintf(saveAux, "%d", video.nframe);
+		strcat(save, saveAux);
+		strcat(save, ".jpeg");
+		
+		cvSaveImage(save, frameOrig, 0);*/
+				
 		/* Exibe a frame a trabalhar */
 		// cvShowImage("VC - TP2 - work", frame); // desligar para aparecer apenas video trabalhado
 
